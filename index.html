@@ -61,6 +61,95 @@
             z-index: 10000;
         }
 
+        /* Welcome Intro Overlay Modal */
+        .welcome-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(34, 13, 22, 0.96) 0%, rgba(13, 4, 8, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .welcome-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .welcome-card {
+            background: linear-gradient(145deg, #2a111c, #16080e);
+            border: 1px solid var(--sage-border);
+            border-radius: 20px;
+            max-width: 520px;
+            width: 100%;
+            padding: clamp(2rem, 3.5vw, 3rem);
+            text-align: center;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 30px rgba(184, 58, 94, 0.2);
+            transform: scale(1);
+            transition: transform 0.4s ease;
+        }
+
+        .welcome-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.8rem;
+            background: rgba(139, 38, 62, 0.3);
+            border: 1px solid var(--burgundy-bright);
+            border-radius: 30px;
+            color: #ff9cb7;
+            margin-bottom: 1.25rem;
+        }
+
+        .welcome-card h2 {
+            font-size: clamp(1.6rem, 2.2vw, 2.2rem);
+            font-weight: 700;
+            color: var(--cream-light);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-card p {
+            color: var(--cream-muted);
+            font-size: 1rem;
+            line-height: 1.65;
+            margin-bottom: 0.75rem;
+        }
+
+        .welcome-sub {
+            font-size: 0.9rem !important;
+            color: var(--sage-grey) !important;
+            margin-bottom: 2rem !important;
+        }
+
+        .welcome-enter-btn {
+            background: linear-gradient(135deg, var(--burgundy-bright), var(--burgundy-accent));
+            border: none;
+            color: var(--cream-light);
+            padding: 0.95rem 2.4rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px var(--burgundy-glow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .welcome-enter-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 10px 30px var(--burgundy-glow);
+        }
+
         /* Floating Audio Toggle */
         .music-toggle-btn {
             position: fixed;
@@ -392,7 +481,7 @@
             align-items: center;
             justify-content: center;
             background: #0d0408;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.4s ease-in-out;
         }
 
         .slide.active {
@@ -405,12 +494,6 @@
             height: 100%;
             object-fit: contain;
             display: block;
-            transform: scale(1.02);
-            transition: transform 6s ease-out;
-        }
-
-        .slide.active img {
-            transform: scale(1);
         }
 
         .slide-overlay {
@@ -1191,6 +1274,18 @@
 
 <canvas id="confettiCanvas"></canvas>
 
+<!-- Welcome Intro Modal Overlay -->
+<div class="welcome-overlay" id="welcomeOverlay">
+    <div class="welcome-card">
+        <div class="welcome-badge">Parichay Arora ✦ Signing Off</div>
+        <h2>Before You Step In...</h2>
+        <p>Some journeys end, but the memories stay for a lifetime. This space is a collection of the moments, milestones, and shared smiles that defined my time with all of you. Thank you for making my time here truly count.</p>
+        <button class="welcome-enter-btn" onclick="enterFarewellExperience()">
+            <span>Enter & take a walk down memory lane</span> ✦
+        </button>
+    </div>
+</div>
+
 <!-- Audio Player -->
 <audio id="bgAudio" loop preload="auto">
     <source src="farewell-song.mp3" type="audio/mpeg">
@@ -1265,7 +1360,7 @@
                 <h2>A Look Back</h2>
                 <div class="slideshow-subtitle">Swipe or click through to find yourself in the memories I'm taking with me.</div>
             </div>
-            <span class="slide-counter" id="slideCounter">1 / 28</span>
+            <span class="slide-counter" id="slideCounter">1 / 29</span>
         </div>
 
         <div class="slideshow-container" id="slideshowContainer">
@@ -1282,7 +1377,7 @@
 
     <hr class="section-divider">
 
-    <!-- Notes Search & Grid (30 Teammates) -->
+    <!-- Notes Search & Grid (32 Teammates) -->
     <div class="search-header">
         <div>
             <span class="section-label">A Few Words</span>
@@ -1416,10 +1511,10 @@
                 <span class="contact-value">in/parichayarora</span>
             </a>
 
-            <a href="https://yourwebsite.com" target="_blank" rel="noopener noreferrer" class="contact-card">
+            <a href="https://parichay-arora.github.io/" target="_blank" rel="noopener noreferrer" class="contact-card">
                 <span class="contact-icon">🌐</span>
                 <span class="contact-title">Website</span>
-                <span class="contact-value">https://parichay-arora.github.io/</span>
+                <span class="contact-value">parichay-arora.github.io</span>
             </a>
         </div>
     </section>
@@ -1486,21 +1581,21 @@
         }
     }
 
-    function initAudioOnFirstInteraction() {
-        if (!isAudioPlaying) {
-            audio.play().then(() => {
-                isAudioPlaying = true;
-                musicBtn.classList.add('playing');
-                musicIcon.innerText = '🎵';
-                musicLabel.innerText = 'Mute Music';
-            }).catch(() => {});
+    /* Welcome Modal Trigger */
+    function enterFarewellExperience() {
+        const welcome = document.getElementById('welcomeOverlay');
+        if (welcome) {
+            welcome.classList.add('hidden');
         }
-        window.removeEventListener('click', initAudioOnFirstInteraction);
-        window.removeEventListener('keydown', initAudioOnFirstInteraction);
+        
+        // Start audio playback smoothly on this deliberate click
+        if (!isAudioPlaying) {
+            toggleAudio();
+        }
+        
+        // Celebratory confetti burst
+        triggerConfetti();
     }
-
-    window.addEventListener('click', initAudioOnFirstInteraction, { once: true });
-    window.addEventListener('keydown', initAudioOnFirstInteraction, { once: true });
 
     /* --- Confetti Engine --- */
     const confettiCanvas = document.getElementById('confettiCanvas');
@@ -1573,7 +1668,7 @@
 
     function loopTypeWriter() {
         const currentSub = fullHeading.slice(0, charIndex);
-        textTarget.innerHTML = currentSub.replace("\n", "<br>");
+        textTarget.innerHTML = currentSub.replace(/\n/g, "<br>");
 
         if (!isDeleting) {
             charIndex++;
@@ -1595,7 +1690,7 @@
         }
     }
 
-    /* --- Slideshow Data (Images Array) --- */
+    /* --- Slideshow Data (29 Moments) --- */
     const slidesData = [
         { img: "images/1.jpg", title: "Day One in Wipro", desc: "First picture at Wipro with college mates on orientation day." },
         { img: "images/2.jpg", title: "My Gurudev", desc: "The person I owe everything to for guiding me all along." },
@@ -1628,7 +1723,7 @@
         { img: "images/30.jpg", title: "Office Hours ? Nah, Daily Dose of Happiness", desc: "" },
     ];
 
-    /* --- Team Notes Data (Your 30 Custom Teammate Notes) --- */
+    /* --- Team Notes Data (32 Custom Notes) --- */
     const teamNotes = [
         { id: "01", name: "Aditya Raj Gulati", note: "Aditya, thank you for being such a lively presence on the floor and making things happen, especially our unforgettable Rishikesh offsite! Thanks for bringing me into the Locker Room Club. Wishing you continuous growth and the absolute best ahead!" },
         { id: "02", name: "Akshay Gopal", note: "I really wish we could have more office hours calls. It was genuinely fun collaborating with you and learning alongside you. Wishing you all the very best for everything ahead!" },
@@ -1666,20 +1761,28 @@
 
     document.getElementById('modalAuthor').innerText = SENDER_NAME;
 
-    /* --- Slideshow Controller (Clean 6-Second Auto-Advance) --- */
+    /* --- Slideshow Controller (Full Background Preload & Manual Navigation) --- */
     const slidesTrack = document.getElementById('slidesTrack');
     const dotsContainer = document.getElementById('sliderDots');
     const slideCounter = document.getElementById('slideCounter');
     const slideshowContainer = document.getElementById('slideshowContainer');
 
     let currentSlide = 0;
-    let slideTimer;
 
+    // Preload ALL images in background memory cache immediately
+    const preloadedImagesCache = [];
+    slidesData.forEach((item) => {
+        const img = new Image();
+        img.src = item.img;
+        preloadedImagesCache.push(img);
+    });
+
+    // Build slides without auto timer
     slidesData.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = `slide ${index === 0 ? 'active' : ''}`;
         slide.innerHTML = `
-            <img src="${item.img}" alt="${item.title}" loading="lazy">
+            <img src="${item.img}" alt="${item.title}">
             <div class="slide-overlay">
                 <div class="slide-title">${item.title}</div>
                 <div class="slide-desc">${item.desc}</div>
@@ -1726,27 +1829,17 @@
     function goToSlide(idx) {
         currentSlide = idx;
         updateSlides();
-        resetTimer();
     }
 
-    function startTimer() {
-        slideTimer = setInterval(nextSlide, 6000);
-    }
-
-    function resetTimer() {
-        clearInterval(slideTimer);
-        startTimer();
-    }
-
-    startTimer();
+    // Initialize first slide view
     updateSlides();
 
     /* Keyboard Navigation */
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
         if (document.getElementById('modalOverlay').classList.contains('active')) return;
-        if (e.key === 'ArrowRight') { nextSlide(); resetTimer(); }
-        if (e.key === 'ArrowLeft') { prevSlide(); resetTimer(); }
+        if (e.key === 'ArrowRight') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
     });
 
     /* --- Cards Controller --- */
@@ -1806,7 +1899,6 @@
         const padding = 80;
         const ctx = canvas.getContext('2d');
 
-        // Font calculation and text wrapping
         const lineHeight = 46;
         ctx.font = '28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
@@ -1832,7 +1924,6 @@
         const maxTextWidth = width - (padding * 2) - 40;
         const lines = getLines(ctx, currentActiveNote.note, maxTextWidth);
 
-        // Dynamic height based on message length
         const headerHeight = 220;
         const textBlockHeight = lines.length * lineHeight;
         const footerHeight = 170;
@@ -1868,7 +1959,7 @@
         ctx.fillStyle = '#ff9cb7';
         ctx.font = 'bold 15px -apple-system, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('Perosnal Farewell Note', padding + 105, padding + 24);
+        ctx.fillText('Personal Farewell Note', padding + 105, padding + 24);
 
         // Sender Info
         ctx.textAlign = 'right';
