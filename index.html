@@ -1236,15 +1236,16 @@
             border-color: var(--burgundy-bright);
         }
 
-        /* Preload Progress & Button States */
+        
+        /* Preload Progress & Hidden Button Reveal */
         .load-progress-wrap {
-            margin: 1.4rem 0 1.25rem;
+            margin: 1.6rem 0 1rem;
             width: 100%;
         }
 
         .load-progress-bar {
             width: 100%;
-            height: 6px;
+            height: 7px;
             background: rgba(235, 228, 216, 0.1);
             border-radius: 10px;
             overflow: hidden;
@@ -1256,58 +1257,61 @@
             width: 0%;
             background: linear-gradient(90deg, var(--burgundy-accent), var(--burgundy-bright), #ff9cb7);
             border-radius: 10px;
-            transition: width 0.3s ease;
+            transition: width 0.25s ease;
         }
 
         .load-status-text {
-            margin-top: 0.55rem;
-            font-size: 0.82rem;
-            color: var(--sage-grey);
-            letter-spacing: 0.04em;
+            margin-top: 0.65rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--cream-beige);
+            letter-spacing: 0.03em;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.45rem;
+            gap: 0.5rem;
+        }
+
+        .load-sub-hint {
+            margin-top: 0.35rem;
+            font-size: 0.78rem;
+            color: var(--sage-grey);
+            letter-spacing: 0.02em;
         }
 
         .spinner-dot {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--burgundy-bright);
-            box-shadow: 0 0 8px var(--burgundy-glow);
-            animation: pulseDot 1s infinite alternate;
+            box-shadow: 0 0 10px var(--burgundy-glow);
+            animation: pulseDot 0.8s infinite alternate;
         }
 
         @keyframes pulseDot {
             0% { opacity: 0.3; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1.3); }
         }
 
-        .welcome-enter-btn.loading {
-            pointer-events: none;
-            background: rgba(235, 228, 216, 0.06);
-            border: 1px dashed var(--sage-border);
-            color: var(--cream-muted);
-            cursor: wait;
-            box-shadow: none;
-            transform: none !important;
-            opacity: 0.75;
-        }
-
+        /* The button only reveals when all assets are 100% ready */
         .welcome-enter-btn.ready {
             background: linear-gradient(135deg, var(--burgundy-bright), var(--burgundy-accent));
             border: none;
             color: var(--cream-light);
             cursor: pointer;
             box-shadow: 0 6px 20px var(--burgundy-glow);
-            animation: pulseReadyBtn 2s infinite ease-in-out;
-            opacity: 1;
+            animation: popInBtn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, pulseReadyBtn 2.2s infinite ease-in-out 0.6s;
+            margin-top: 1rem;
+        }
+
+        @keyframes popInBtn {
+            0% { opacity: 0; transform: translateY(10px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @keyframes pulseReadyBtn {
             0%, 100% { box-shadow: 0 6px 20px var(--burgundy-glow); transform: scale(1); }
-            50% { box-shadow: 0 10px 30px rgba(184, 58, 94, 0.6); transform: scale(1.02); }
+            50% { box-shadow: 0 12px 30px rgba(184, 58, 94, 0.7); transform: scale(1.025); }
         }
 
         /* Floating Audio Toggle */
@@ -1364,13 +1368,16 @@
                 <div class="load-progress-fill" id="loadProgressFill"></div>
             </div>
             <div class="load-status-text" id="loadStatusText">
-                <span class="spinner-dot"></span> Preloading memories & music in the background...
+                <span class="spinner-dot"></span> Preloading all memories into local memory (0%)...
+            </div>
+            <div class="load-sub-hint" id="loadSubHint">
+                Buffering all images upfront so your gallery walkthrough is instantaneous.
             </div>
         </div>
 
-        <!-- Action Button (initially disabled/loading state) -->
-        <button id="welcomeEnterBtn" class="welcome-enter-btn loading" onclick="enterFarewellExperience()" disabled>
-            <span id="welcomeBtnLabel">Buffering memories... please hold on ⏳</span>
+        <!-- Action Button: Hidden until 100% of assets are completely buffered -->
+        <button id="welcomeEnterBtn" class="welcome-enter-btn ready" onclick="enterFarewellExperience()" style="display: none;">
+            <span>Enter & take a walk down memory lane</span> ✦
         </button>
     </div>
 </div>
@@ -1813,14 +1820,6 @@
 
     document.getElementById('modalAuthor').innerText = SENDER_NAME;
 
-    /* --- Slideshow Controller (Full Background Preload & Manual Navigation) --- */
-    const slidesTrack = document.getElementById('slidesTrack');
-    const dotsContainer = document.getElementById('sliderDots');
-    const slideCounter = document.getElementById('slideCounter');
-    const slideshowContainer = document.getElementById('slideshowContainer');
-
-    let currentSlide = 0;
-
 
     /* --- Audio Controls --- */
     const audio = document.getElementById('bgAudio');
@@ -1851,77 +1850,83 @@
         }
     }
 
-    /* --- Background Asset Preloader (Images + Audio) --- */
+    /* --- Strict 100% Upfront Resource Preloader --- */
     let isAssetsReady = false;
-    const preloadList = [
+    const progressFill = document.getElementById('loadProgressFill');
+    const statusText = document.getElementById('loadStatusText');
+    const subHint = document.getElementById('loadSubHint');
+    const enterBtn = document.getElementById('welcomeEnterBtn');
+
+    // Build the complete list of all required assets
+    const imagesToLoad = [
         'images/profile.jpg',
         'images/linkedinURL.jpg',
         ...slidesData.map(s => s.img)
     ];
 
-    const totalAssets = preloadList.length + 1; // +1 for audio
-    let loadedAssetsCount = 0;
-    const progressFill = document.getElementById('loadProgressFill');
-    const statusText = document.getElementById('loadStatusText');
-    const enterBtn = document.getElementById('welcomeEnterBtn');
-    const btnLabel = document.getElementById('welcomeBtnLabel');
+    const totalResources = imagesToLoad.length + 1; // +1 for the MP3
+    let processedCount = 0;
+    let successfulCount = 0;
 
-    function updatePreloadProgress() {
-        loadedAssetsCount++;
-        const pct = Math.min(100, Math.round((loadedAssetsCount / totalAssets) * 100));
+    function handleResourceProgress(url, isOk) {
+        processedCount++;
+        if (isOk) successfulCount++;
+
+        const pct = Math.min(100, Math.round((processedCount / totalResources) * 100));
         if (progressFill) progressFill.style.width = pct + '%';
-        if (statusText) statusText.innerHTML = `<span class="spinner-dot"></span> Preloading memories (${pct}%)...`;
+        if (statusText) {
+            statusText.innerHTML = `<span class="spinner-dot"></span> Buffering memories & music (${processedCount}/${totalResources} • ${pct}%)...`;
+        }
 
-        if (loadedAssetsCount >= totalAssets) {
-            onPreloadComplete();
+        if (processedCount >= totalResources) {
+            triggerAllLoadedState();
         }
     }
 
-    function onPreloadComplete() {
+    function triggerAllLoadedState() {
         if (isAssetsReady) return;
         isAssetsReady = true;
 
         if (progressFill) progressFill.style.width = '100%';
-        if (statusText) statusText.innerHTML = `✓ All memories & music ready!`;
-
-        if (enterBtn) {
-            enterBtn.disabled = false;
-            enterBtn.classList.remove('loading');
-            enterBtn.classList.add('ready');
+        if (statusText) {
+            statusText.innerHTML = `✓ Everything is loaded & ready in memory!`;
+            statusText.style.color = '#ff9cb7';
         }
-        if (btnLabel) {
-            btnLabel.innerHTML = 'Enter & take a walk down memory lane ✦';
+        if (subHint) {
+            subHint.innerHTML = `All photos and sound are buffered for a seamless walkthrough.`;
+        }
+
+        // REVEAL THE BUTTON ONLY NOW
+        if (enterBtn) {
+            enterBtn.style.display = 'inline-flex';
         }
     }
 
-    // Preload all images
-    preloadList.forEach(src => {
+    // 1. Download & cache every single image in parallel
+    imagesToLoad.forEach(src => {
         const img = new Image();
-        img.onload = updatePreloadProgress;
-        img.onerror = updatePreloadProgress; // Don't block progress on broken image
+        img.onload = () => handleResourceProgress(src, true);
+        img.onerror = () => {
+            console.warn("Could not load image:", src);
+            handleResourceProgress(src, false);
+        };
         img.src = src;
     });
 
-    // Preload audio
+    // 2. Download & cache the audio file in background
     if (audio) {
-        audio.addEventListener('canplaythrough', updatePreloadProgress, { once: true });
-        audio.addEventListener('error', updatePreloadProgress, { once: true });
+        const onAudioReady = () => handleResourceProgress('farewell-song.mp3', true);
+        const onAudioFail = () => handleResourceProgress('farewell-song.mp3', false);
+
+        audio.addEventListener('canplaythrough', onAudioReady, { once: true });
+        audio.addEventListener('error', onAudioFail, { once: true });
         audio.load();
     } else {
-        updatePreloadProgress();
+        handleResourceProgress('none', false);
     }
-
-    // Safety fallback only for complete network dropouts (25s)
-    setTimeout(() => {
-        if (!isAssetsReady) {
-            if (statusText) statusText.innerHTML = `Taking longer than expected... Click below to enter anyway.`;
-            onPreloadComplete();
-        }
-    }, 25000);
 
     /* Welcome Modal Trigger */
     function enterFarewellExperience() {
-        // Strict guard: Do not proceed if assets are still buffering
         if (!isAssetsReady) return;
 
         const welcome = document.getElementById('welcomeOverlay');
@@ -1929,18 +1934,23 @@
             welcome.classList.add('hidden');
         }
 
-        // Show floating music toggle and start music
+        // Show audio toggle & play music
         if (musicBtn) {
             musicBtn.style.display = 'flex';
         }
         toggleAudio();
 
-        // Celebratory confetti burst
+        // Confetti celebration
         triggerConfetti();
     }
 
+    /* --- Slideshow Controller (All Images Cached in Memory) --- */
+    const slidesTrack = document.getElementById('slidesTrack');
+    const dotsContainer = document.getElementById('sliderDots');
+    const slideCounter = document.getElementById('slideCounter');
+    let currentSlide = 0;
 
-    // Build slides without auto timer
+    // Render slides directly with real image paths because everything is already downloaded
     slidesData.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = `slide ${index === 0 ? 'active' : ''}`;
@@ -2004,6 +2014,7 @@
         if (e.key === 'ArrowRight') nextSlide();
         if (e.key === 'ArrowLeft') prevSlide();
     });
+
 
     /* --- Cards Controller --- */
     const grid = document.getElementById('cardGrid');
