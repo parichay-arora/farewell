@@ -1349,6 +1349,125 @@
             box-shadow: 0 0 16px var(--burgundy-glow);
         }
 
+
+        /* Carousel Dedicated Loader Overlay */
+        .carousel-loader-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(28, 11, 18, 0.96) 0%, rgba(13, 4, 8, 0.98) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(1rem, 3vw, 2.5rem);
+            z-index: 20;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .carousel-loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .carousel-loader-card {
+            background: linear-gradient(145deg, rgba(42, 17, 28, 0.85), rgba(22, 8, 14, 0.95));
+            border: 1px solid var(--sage-border);
+            border-radius: 20px;
+            max-width: 580px;
+            width: 90%;
+            padding: clamp(1.8rem, 3vw, 2.8rem);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(184, 58, 94, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .carousel-spinner-ring {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(235, 228, 216, 0.15);
+            border-top-color: var(--burgundy-bright);
+            border-right-color: #ff9cb7;
+            border-radius: 50%;
+            animation: spinRing 0.9s linear infinite;
+            margin-bottom: 1.25rem;
+        }
+
+        @keyframes spinRing {
+            to { transform: rotate(360deg); }
+        }
+
+        .carousel-loader-card h3 {
+            font-size: clamp(1.3rem, 1.8vw, 1.8rem);
+            color: var(--cream-light);
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+
+        .carousel-loader-desc {
+            font-size: clamp(0.85rem, 0.9vw, 0.95rem);
+            color: var(--cream-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-width: 460px;
+        }
+
+        .carousel-progress-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(235, 228, 216, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--sage-border);
+            margin-bottom: 0.65rem;
+        }
+
+        .carousel-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--burgundy-accent), var(--burgundy-bright), #ff9cb7);
+            border-radius: 10px;
+            transition: width 0.25s ease;
+        }
+
+        .carousel-status-count {
+            font-size: 0.86rem;
+            color: var(--cream-beige);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .carousel-explore-banner {
+            background: rgba(139, 38, 62, 0.2);
+            border: 1px dashed var(--burgundy-bright);
+            border-radius: 12px;
+            padding: 0.85rem 1.25rem;
+            color: var(--cream-light);
+            font-size: clamp(0.82rem, 0.85vw, 0.92rem);
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: left;
+        }
+
+        .explore-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .carousel-explore-banner strong {
+            color: #ff9cb7;
+        }
+
     </style>
 </head>
 <body>
@@ -1362,27 +1481,24 @@
         <h2>Before You Step In...</h2>
         <p>Some journeys end, but the memories stay for a lifetime. This space is a collection of the moments, milestones, and shared smiles that defined my time with all of you. Thank you for making my time here truly count.</p>
         
-        <!-- Preload Progress Container -->
-        <div class="load-progress-wrap" id="loadProgressWrap">
+        <!-- Welcome Preload Progress (Only Profile & Music) -->
+        <div class="load-progress-wrap" id="welcomeProgressWrap">
             <div class="load-progress-bar">
-                <div class="load-progress-fill" id="loadProgressFill"></div>
+                <div class="load-progress-fill" id="welcomeProgressFill"></div>
             </div>
-            <div class="load-status-text" id="loadStatusText">
-                <span class="spinner-dot"></span> Preloading all memories into local memory (0%)...
-            </div>
-            <div class="load-sub-hint" id="loadSubHint">
-                Buffering all images upfront so your gallery walkthrough is instantaneous.
+            <div class="load-status-text" id="welcomeStatusText">
+                <span class="spinner-dot"></span> Tuning music & setting the stage...
             </div>
         </div>
 
-        <!-- Action Button: Hidden until 100% of assets are completely buffered -->
+        <!-- Action Button (Reveals once profile & audio are primed, within 1-2 sec) -->
         <button id="welcomeEnterBtn" class="welcome-enter-btn ready" onclick="enterFarewellExperience()" style="display: none;">
             <span>Enter & take a walk down memory lane</span> ✦
         </button>
     </div>
 </div>
 
-<!-- Audio Player (preloaded in background) -->
+<!-- Audio Player -->
 <audio id="bgAudio" loop preload="auto">
     <source src="farewell-song.mp3" type="audio/mpeg">
 </audio>
@@ -1448,8 +1564,8 @@
         </div>
     </div>
 
-    <!-- Slideshow Section (Fixed Frame 1920x1080) -->
-    <section class="slideshow-section">
+        <!-- Slideshow Section (Fixed Frame 1920x1080) -->
+    <section class="slideshow-section" id="slideshowSection">
         <span class="section-label">Moments Together</span>
         <div class="slideshow-header">
             <div>
@@ -1460,6 +1576,27 @@
         </div>
 
         <div class="slideshow-container" id="slideshowContainer">
+            <!-- Carousel Dedicated Buffer Overlay -->
+            <div class="carousel-loader-overlay" id="carouselLoaderOverlay">
+                <div class="carousel-loader-card">
+                    <div class="carousel-spinner-ring"></div>
+                    <h3>Loading Memory Gallery</h3>
+                    <p class="carousel-loader-desc">Buffering high-resolution photos into memory so you can flip through without any lag.</p>
+                    
+                    <div class="carousel-progress-track">
+                        <div class="carousel-progress-fill" id="carouselProgressFill"></div>
+                    </div>
+                    <div class="carousel-status-count" id="carouselStatusCount">
+                        <span class="spinner-dot"></span> Loading: 0 / 29 Photos (0%)
+                    </div>
+                    
+                    <div class="carousel-explore-banner">
+                        <span class="explore-icon">💌</span>
+                        <span>While these memories load, scroll down to read your <strong>Personal Notes</strong> below!</span>
+                    </div>
+                </div>
+            </div>
+
             <div id="slidesTrack"></div>
 
             <button class="slider-btn prev" onclick="prevSlide()" aria-label="Previous Slide">&#10094;</button>
@@ -1770,8 +1907,8 @@
         { img: "images/18.jpg", title: "The Mushroom Tart", desc: "When ordering and tasting the mushroom tart became mandatory for everyone." },
         { img: "images/20.jpg", title: "Team Party Moments", desc: "Another great picture from our team celebration." },
         { img: "images/21.jpg", title: "CyberHub Strollers", desc: "Three of us, taking a walk around CyberHub or chilling in the cafeteria." },
-        { img: "images/22.JPG", title: "Third Floor Farewell", desc: "Our final photo on the 3rd floor, and my first and only picture with Himalaya." },
-        { img: "images/23.JPG", title: "Twinning on Purpose", desc: "This was not a coincidence at all. I planned this, just to get a picture for the memories." },
+        { img: "images/22.jpg", title: "Third Floor Farewell", desc: "Our final photo on the 3rd floor, and my first and only picture with Himalaya." },
+        { img: "images/23.jpg", title: "Twinning on Purpose", desc: "This was not a coincidence at all. I planned this, just to get a picture for the memories." },
         { img: "images/31.jpg", title: "Not again, please", desc: "This one was definitely not on purpose. It is officially time to retire this legendary Snitch shirt." },
         { img: "images/32.jpg", title: "FOREians", desc: "Placed together from college into the same company, and having them around felt like family at workplace. The picture would have been complete if Rishabh was there that day." },
         { img: "images/24.jpg", title: "My Favorite Spot - Taco Bell", desc: "How could I miss to mention my go-to place, or in Gurkirat's words: 'Mere ghar ki dukaan'." },
@@ -1850,91 +1987,69 @@
         }
     }
 
-    /* --- Strict 100% Upfront Resource Preloader --- */
-    let isAssetsReady = false;
-    const progressFill = document.getElementById('loadProgressFill');
-    const statusText = document.getElementById('loadStatusText');
-    const subHint = document.getElementById('loadSubHint');
-    const enterBtn = document.getElementById('welcomeEnterBtn');
+    /* --- Stage 1: Fast Welcome Preloader (Profile Photo & Music Only) --- */
+    let isWelcomeReady = false;
+    const welcomeFill = document.getElementById('welcomeProgressFill');
+    const welcomeStatus = document.getElementById('welcomeStatusText');
+    const welcomeBtn = document.getElementById('welcomeEnterBtn');
 
-    // Build the complete list of all required assets
-    const imagesToLoad = [
-        'images/profile.jpg',
-        'images/linkedinURL.jpg',
-        ...slidesData.map(s => s.img)
-    ];
+    const entryAssets = ['images/profile.jpg', 'images/linkedinURL.jpg'];
+    let entryLoadedCount = 0;
+    const totalEntryAssets = entryAssets.length + 1; // +1 for audio
 
-    const totalResources = imagesToLoad.length + 1; // +1 for the MP3
-    let processedCount = 0;
-    let successfulCount = 0;
+    function updateEntryProgress() {
+        entryLoadedCount++;
+        const pct = Math.min(100, Math.round((entryLoadedCount / totalEntryAssets) * 100));
+        if (welcomeFill) welcomeFill.style.width = pct + '%';
+        if (welcomeStatus) welcomeStatus.innerHTML = `<span class="spinner-dot"></span> Setting the stage (${pct}%)...`;
 
-    function handleResourceProgress(url, isOk) {
-        processedCount++;
-        if (isOk) successfulCount++;
-
-        const pct = Math.min(100, Math.round((processedCount / totalResources) * 100));
-        if (progressFill) progressFill.style.width = pct + '%';
-        if (statusText) {
-            statusText.innerHTML = `<span class="spinner-dot"></span> Buffering memories & music (${processedCount}/${totalResources} • ${pct}%)...`;
-        }
-
-        if (processedCount >= totalResources) {
-            triggerAllLoadedState();
+        if (entryLoadedCount >= totalEntryAssets) {
+            unlockWelcomeModal();
         }
     }
 
-    function triggerAllLoadedState() {
-        if (isAssetsReady) return;
-        isAssetsReady = true;
+    function unlockWelcomeModal() {
+        if (isWelcomeReady) return;
+        isWelcomeReady = true;
 
-        if (progressFill) progressFill.style.width = '100%';
-        if (statusText) {
-            statusText.innerHTML = `✓ Everything is loaded & ready in memory!`;
-            statusText.style.color = '#ff9cb7';
-        }
-        if (subHint) {
-            subHint.innerHTML = `All photos and sound are buffered for a seamless walkthrough.`;
-        }
+        if (welcomeFill) welcomeFill.style.width = '100%';
+        if (welcomeStatus) welcomeStatus.innerHTML = `✓ Ready for you!`;
 
-        // REVEAL THE BUTTON ONLY NOW
-        if (enterBtn) {
-            enterBtn.style.display = 'inline-flex';
+        if (welcomeBtn) {
+            welcomeBtn.style.display = 'inline-flex';
         }
     }
 
-    // 1. Download & cache every single image in parallel
-    imagesToLoad.forEach(src => {
+    // Load profile & QR image
+    entryAssets.forEach(src => {
         const img = new Image();
-        img.onload = () => handleResourceProgress(src, true);
-        img.onerror = () => {
-            console.warn("Could not load image:", src);
-            handleResourceProgress(src, false);
-        };
+        img.onload = updateEntryProgress;
+        img.onerror = updateEntryProgress;
         img.src = src;
     });
 
-    // 2. Download & cache the audio file in background
+    // Buffer audio
     if (audio) {
-        const onAudioReady = () => handleResourceProgress('farewell-song.mp3', true);
-        const onAudioFail = () => handleResourceProgress('farewell-song.mp3', false);
-
-        audio.addEventListener('canplaythrough', onAudioReady, { once: true });
-        audio.addEventListener('error', onAudioFail, { once: true });
+        audio.addEventListener('canplaythrough', updateEntryProgress, { once: true });
+        audio.addEventListener('error', updateEntryProgress, { once: true });
         audio.load();
     } else {
-        handleResourceProgress('none', false);
+        updateEntryProgress();
     }
+
+    // Fast 1.8s safety threshold so user never waits more than 2 seconds to enter
+    setTimeout(unlockWelcomeModal, 1800);
 
     /* Welcome Modal Trigger */
     function enterFarewellExperience() {
-        if (!isAssetsReady) return;
+        if (!isWelcomeReady) return;
 
         const welcome = document.getElementById('welcomeOverlay');
         if (welcome) {
             welcome.classList.add('hidden');
         }
 
-        // Show audio toggle & play music
+        // Show music toggle & start audio
         if (musicBtn) {
             musicBtn.style.display = 'flex';
         }
@@ -1942,15 +2057,99 @@
 
         // Confetti celebration
         triggerConfetti();
+
+        // Trigger Stage 2: Background Carousel Asset Buffer
+        startCarouselPreloading();
     }
 
-    /* --- Slideshow Controller (All Images Cached in Memory) --- */
+    /* --- Stage 2: Carousel Dedicated Preloader (All 29 Slides) --- */
+    let isCarouselReady = false;
+    const carouselFill = document.getElementById('carouselProgressFill');
+    const carouselStatus = document.getElementById('carouselStatusCount');
+    const carouselOverlay = document.getElementById('carouselLoaderOverlay');
+
+    let loadedSlideCount = 0;
+    const totalSlidesCount = slidesData.length;
+
+    function handleSlideLoadProgress(url, isOk) {
+        loadedSlideCount++;
+        const pct = Math.min(100, Math.round((loadedSlideCount / totalSlidesCount) * 100));
+        if (carouselFill) carouselFill.style.width = pct + '%';
+        if (carouselStatus) {
+            carouselStatus.innerHTML = `<span class="spinner-dot"></span> Loading: ${loadedSlideCount} / ${totalSlidesCount} Photos (${pct}%)`;
+        }
+
+        if (loadedSlideCount >= totalSlidesCount) {
+            unlockCarousel();
+        }
+    }
+
+    function unlockCarousel() {
+        if (isCarouselReady) return;
+        isCarouselReady = true;
+
+        if (carouselFill) carouselFill.style.width = '100%';
+        if (carouselStatus) {
+            carouselStatus.innerHTML = `✓ All ${totalSlidesCount} Memories Loaded!`;
+            carouselStatus.style.color = '#ff9cb7';
+        }
+
+        setTimeout(() => {
+            if (carouselOverlay) {
+                carouselOverlay.classList.add('hidden');
+            }
+        }, 600);
+    }
+
+    // Smart fallback loader for slide images (handles .jpg vs .JPG vs .jpeg)
+    function preloadSlideWithFallback(originalSrc) {
+        const extensions = [
+            originalSrc,
+            originalSrc.replace(/\.jpg$/, '.JPG'),
+            originalSrc.replace(/\.jpg$/, '.jpeg'),
+            originalSrc.replace(/\.jpg$/, '.png')
+        ];
+
+        let attempt = 0;
+        function tryNext() {
+            if (attempt >= extensions.length) {
+                handleSlideLoadProgress(originalSrc, false);
+                return;
+            }
+            const testImg = new Image();
+            testImg.onload = () => {
+                // If capitalized extension worked, update in slide elements
+                const matchedSrc = extensions[attempt];
+                slidesData.forEach(slide => {
+                    if (slide.img === originalSrc) slide.img = matchedSrc;
+                });
+                const domImgs = document.querySelectorAll(`#slidesTrack img[src="${originalSrc}"]`);
+                domImgs.forEach(i => i.src = matchedSrc);
+
+                handleSlideLoadProgress(matchedSrc, true);
+            };
+            testImg.onerror = () => {
+                attempt++;
+                tryNext();
+            };
+            testImg.src = extensions[attempt];
+        }
+        tryNext();
+    }
+
+    function startCarouselPreloading() {
+        slidesData.forEach(item => {
+            preloadSlideWithFallback(item.img);
+        });
+    }
+
+    /* --- Slideshow Controller --- */
     const slidesTrack = document.getElementById('slidesTrack');
     const dotsContainer = document.getElementById('sliderDots');
     const slideCounter = document.getElementById('slideCounter');
     let currentSlide = 0;
 
-    // Render slides directly with real image paths because everything is already downloaded
+    // Render slide elements
     slidesData.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = `slide ${index === 0 ? 'active' : ''}`;
