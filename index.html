@@ -150,40 +150,7 @@
             box-shadow: 0 10px 30px var(--burgundy-glow);
         }
 
-        /* Floating Audio Toggle */
-        .music-toggle-btn {
-            position: fixed;
-            top: clamp(1rem, 2vw, 1.5rem);
-            right: clamp(1rem, 2vw, 2rem);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.55rem 1.15rem;
-            background: rgba(235, 228, 216, 0.08);
-            border: 1px solid var(--sage-border);
-            border-radius: 30px;
-            color: var(--cream-beige);
-            font-size: 0.85rem;
-            font-weight: 500;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            z-index: 998;
-            transition: all 0.25s ease;
-        }
-
-        .music-toggle-btn:hover {
-            background: rgba(235, 228, 216, 0.15);
-            border-color: var(--cream-muted);
-            transform: translateY(-2px);
-        }
-
-        .music-toggle-btn.playing {
-            background: rgba(139, 38, 62, 0.35);
-            border-color: var(--burgundy-bright);
-            box-shadow: 0 0 16px var(--burgundy-glow);
-        }
+        
 
         /* Fluid Main Container */
         .container {
@@ -1268,6 +1235,115 @@
             background: var(--burgundy-accent);
             border-color: var(--burgundy-bright);
         }
+
+        /* Preload Progress & Button States */
+        .load-progress-wrap {
+            margin: 1.4rem 0 1.25rem;
+            width: 100%;
+        }
+
+        .load-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(235, 228, 216, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--sage-border);
+        }
+
+        .load-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--burgundy-accent), var(--burgundy-bright), #ff9cb7);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .load-status-text {
+            margin-top: 0.55rem;
+            font-size: 0.82rem;
+            color: var(--sage-grey);
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+        }
+
+        .spinner-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--burgundy-bright);
+            box-shadow: 0 0 8px var(--burgundy-glow);
+            animation: pulseDot 1s infinite alternate;
+        }
+
+        @keyframes pulseDot {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .welcome-enter-btn.loading {
+            background: rgba(235, 228, 216, 0.06);
+            border: 1px dashed var(--sage-border);
+            color: var(--cream-muted);
+            cursor: wait;
+            box-shadow: none;
+            transform: none !important;
+            opacity: 0.75;
+        }
+
+        .welcome-enter-btn.ready {
+            background: linear-gradient(135deg, var(--burgundy-bright), var(--burgundy-accent));
+            border: none;
+            color: var(--cream-light);
+            cursor: pointer;
+            box-shadow: 0 6px 20px var(--burgundy-glow);
+            animation: pulseReadyBtn 2s infinite ease-in-out;
+            opacity: 1;
+        }
+
+        @keyframes pulseReadyBtn {
+            0%, 100% { box-shadow: 0 6px 20px var(--burgundy-glow); transform: scale(1); }
+            50% { box-shadow: 0 10px 30px rgba(184, 58, 94, 0.6); transform: scale(1.02); }
+        }
+
+        /* Floating Audio Toggle */
+        .music-toggle-btn {
+            position: fixed;
+            top: clamp(1rem, 2vw, 1.5rem);
+            right: clamp(1rem, 2vw, 2rem);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.15rem;
+            background: rgba(235, 228, 216, 0.08);
+            border: 1px solid var(--sage-border);
+            border-radius: 30px;
+            color: var(--cream-beige);
+            font-size: 0.85rem;
+            font-weight: 500;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            z-index: 998;
+            transition: all 0.25s ease;
+        }
+
+        .music-toggle-btn:hover {
+            background: rgba(235, 228, 216, 0.15);
+            border-color: var(--cream-muted);
+            transform: translateY(-2px);
+        }
+
+        .music-toggle-btn.playing {
+            background: rgba(139, 38, 62, 0.35);
+            border-color: var(--burgundy-bright);
+            box-shadow: 0 0 16px var(--burgundy-glow);
+        }
+
     </style>
 </head>
 <body>
@@ -1280,21 +1356,33 @@
         <div class="welcome-badge">Parichay Arora ✦ Signing Off</div>
         <h2>Before You Step In...</h2>
         <p>Some journeys end, but the memories stay for a lifetime. This space is a collection of the moments, milestones, and shared smiles that defined my time with all of you. Thank you for making my time here truly count.</p>
-        <button class="welcome-enter-btn" onclick="enterFarewellExperience()">
-            <span>Enter & take a walk down memory lane</span> ✦
+        
+        <!-- Preload Progress Container -->
+        <div class="load-progress-wrap" id="loadProgressWrap">
+            <div class="load-progress-bar">
+                <div class="load-progress-fill" id="loadProgressFill"></div>
+            </div>
+            <div class="load-status-text" id="loadStatusText">
+                <span class="spinner-dot"></span> Preloading memories & music in the background...
+            </div>
+        </div>
+
+        <!-- Action Button (initially disabled/loading state) -->
+        <button id="welcomeEnterBtn" class="welcome-enter-btn loading" onclick="enterFarewellExperience()" disabled>
+            <span id="welcomeBtnLabel">Buffering memories... please hold on ⏳</span>
         </button>
     </div>
 </div>
 
-<!-- Audio Player -->
+<!-- Audio Player (preloaded in background) -->
 <audio id="bgAudio" loop preload="auto">
     <source src="farewell-song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Floating Audio Button -->
-<button id="musicToggleBtn" class="music-toggle-btn" onclick="toggleAudio()" aria-label="Toggle Music">
-    <span id="musicIcon">🔇</span>
-    <span id="musicLabel">Turn up the volume & feel the moment 🎧</span>
+<!-- Floating Audio Toggle Button (available after entering) -->
+<button id="musicToggleBtn" class="music-toggle-btn" onclick="toggleAudio()" aria-label="Toggle Music" style="display: none;">
+    <span id="musicIcon">🎵</span>
+    <span id="musicLabel">Music Playing</span>
 </button>
 
 <div class="container">
@@ -1556,46 +1644,9 @@
 
     let currentActiveNote = null;
 
-    /* --- Audio Controls --- */
-    const audio = document.getElementById('bgAudio');
-    const musicBtn = document.getElementById('musicToggleBtn');
-    const musicIcon = document.getElementById('musicIcon');
-    const musicLabel = document.getElementById('musicLabel');
 
-    let isAudioPlaying = false;
 
-    function toggleAudio() {
-        if (isAudioPlaying) {
-            audio.pause();
-            isAudioPlaying = false;
-            musicBtn.classList.remove('playing');
-            musicIcon.innerText = '🔇';
-            musicLabel.innerText = 'Turn up the volume & feel the moment 🎧';
-        } else {
-            audio.play().then(() => {
-                isAudioPlaying = true;
-                musicBtn.classList.add('playing');
-                musicIcon.innerText = '🎵';
-                musicLabel.innerText = 'Mute Music';
-            }).catch(() => {});
-        }
-    }
 
-    /* Welcome Modal Trigger */
-    function enterFarewellExperience() {
-        const welcome = document.getElementById('welcomeOverlay');
-        if (welcome) {
-            welcome.classList.add('hidden');
-        }
-        
-        // Start audio playback smoothly on this deliberate click
-        if (!isAudioPlaying) {
-            toggleAudio();
-        }
-        
-        // Celebratory confetti burst
-        triggerConfetti();
-    }
 
     /* --- Confetti Engine --- */
     const confettiCanvas = document.getElementById('confettiCanvas');
@@ -1769,13 +1820,118 @@
 
     let currentSlide = 0;
 
-    // Preload ALL images in background memory cache immediately
-    const preloadedImagesCache = [];
-    slidesData.forEach((item) => {
+
+    /* --- Audio Controls --- */
+    const audio = document.getElementById('bgAudio');
+    const musicBtn = document.getElementById('musicToggleBtn');
+    const musicIcon = document.getElementById('musicIcon');
+    const musicLabel = document.getElementById('musicLabel');
+    let isAudioPlaying = false;
+
+    function toggleAudio() {
+        if (!audio) return;
+        if (isAudioPlaying) {
+            audio.pause();
+            isAudioPlaying = false;
+            if (musicBtn) {
+                musicBtn.classList.remove('playing');
+                musicIcon.innerText = '🔇';
+                musicLabel.innerText = 'Play Music';
+            }
+        } else {
+            audio.play().then(() => {
+                isAudioPlaying = true;
+                if (musicBtn) {
+                    musicBtn.classList.add('playing');
+                    musicIcon.innerText = '🎵';
+                    musicLabel.innerText = 'Mute Music';
+                }
+            }).catch(() => {});
+        }
+    }
+
+    /* --- Background Asset Preloader (Images + Audio) --- */
+    let isAssetsReady = false;
+    const preloadList = [
+        'images/profile.jpg',
+        'images/linkedinURL.jpg',
+        ...slidesData.map(s => s.img)
+    ];
+
+    const totalAssets = preloadList.length + 1; // +1 for audio
+    let loadedAssetsCount = 0;
+    const progressFill = document.getElementById('loadProgressFill');
+    const statusText = document.getElementById('loadStatusText');
+    const enterBtn = document.getElementById('welcomeEnterBtn');
+    const btnLabel = document.getElementById('welcomeBtnLabel');
+
+    function updatePreloadProgress() {
+        loadedAssetsCount++;
+        const pct = Math.min(100, Math.round((loadedAssetsCount / totalAssets) * 100));
+        if (progressFill) progressFill.style.width = pct + '%';
+        if (statusText) statusText.innerHTML = `<span class="spinner-dot"></span> Preloading memories (${pct}%)...`;
+
+        if (loadedAssetsCount >= totalAssets) {
+            onPreloadComplete();
+        }
+    }
+
+    function onPreloadComplete() {
+        if (isAssetsReady) return;
+        isAssetsReady = true;
+
+        if (progressFill) progressFill.style.width = '100%';
+        if (statusText) statusText.innerHTML = `✓ All memories & music ready!`;
+
+        if (enterBtn) {
+            enterBtn.disabled = false;
+            enterBtn.classList.remove('loading');
+            enterBtn.classList.add('ready');
+        }
+        if (btnLabel) {
+            btnLabel.innerHTML = 'Enter & take a walk down memory lane ✦';
+        }
+    }
+
+    // Preload all images
+    preloadList.forEach(src => {
         const img = new Image();
-        img.src = item.img;
-        preloadedImagesCache.push(img);
+        img.onload = updatePreloadProgress;
+        img.onerror = updatePreloadProgress; // Don't block progress on broken image
+        img.src = src;
     });
+
+    // Preload audio
+    if (audio) {
+        audio.addEventListener('canplaythrough', updatePreloadProgress, { once: true });
+        audio.addEventListener('error', updatePreloadProgress, { once: true });
+        audio.load();
+    } else {
+        updatePreloadProgress();
+    }
+
+    // Safety fallback: Never keep the user waiting more than 4 seconds regardless of connection
+    setTimeout(() => {
+        onPreloadComplete();
+    }, 4200);
+
+    /* Welcome Modal Trigger */
+    function enterFarewellExperience() {
+        const welcome = document.getElementById('welcomeOverlay');
+        if (welcome) {
+            welcome.classList.add('hidden');
+        }
+
+        // Show floating music toggle and start music
+        if (musicBtn) {
+            musicBtn.style.display = 'flex';
+        }
+        toggleAudio();
+
+        // Celebratory confetti burst
+        triggerConfetti();
+    }
+
 
     // Build slides without auto timer
     slidesData.forEach((item, index) => {
