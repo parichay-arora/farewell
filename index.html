@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Before I Sign Off | Parichay Arora</title>
+    <style>
+        :root {
+            /* Palette: Burgundy, Cream Beige, Sage Grey */
+            --bg-deep: #16080e;
+            --bg-burgundy-dark: #220d16;
+            --burgundy-accent: #8b263e;
+            --burgundy-bright: #b83a5e;
+            --burgundy-glow: rgba(184, 58, 94, 0.4);
+            
+            --cream-light: #f7f3ec;
+            --cream-beige: #ebe4d8;
+            --cream-muted: #d5cbbe;
+
+            --sage-grey: #8d9a91;
+            --sage-border: rgba(141, 154, 145, 0.22);
+            --sage-surface: rgba(141, 154, 145, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #2a101b 0%, var(--bg-burgundy-dark) 45%, var(--bg-deep) 100%);
+            color: var(--cream-light);
+            min-height: 100vh;
+            padding-bottom: clamp(3rem, 6vh, 6rem);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 80% 20%, rgba(139, 38, 62, 0.22) 0%, transparent 55%),
+                        radial-gradient(circle at 50% 80%, rgba(141, 154, 145, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Confetti Overlay Canvas */
+        #confettiCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        /* Floating Audio Toggle */
+        .music-toggle-btn {
+            position: fixed;
+            top: clamp(1rem, 2vw, 1.5rem);
+            right: clamp(1rem, 2vw, 2rem);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.15rem;
+            background: rgba(235, 228, 216, 0.08);
+            border: 1px solid var(--sage-border);
+            border-radius: 30px;
+            color: var(--cream-beige);
+            font-size: 0.85rem;
+            font-weight: 500;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            z-index: 998;
+            transition: all 0.25s ease;
+        }
+
+        .music-toggle-btn:hover {
+            background: rgba(235, 228, 216, 0.15);
+            border-color: var(--cream-muted);
+            transform: translateY(-2px);
+        }
+
+        .music-toggle-btn.playing {
+            background: rgba(139, 38, 62, 0.35);
+            border-color: var(--burgundy-bright);
+            box-shadow: 0 0 16px var(--burgundy-glow);
+        }
+
+        /* Fluid Main Container */
+        .container {
+            width: 100% !important;
+            max-width: 98vw !important;
+            margin: 0 auto;
+            padding: clamp(1.5rem, 2vw, 3rem) clamp(1rem, 2vw, 2.5rem);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Split Grid */
+        .hero-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: clamp(1.5rem, 3vw, 3.5rem);
+            align-items: center;
+            margin-bottom: clamp(3rem, 5vh, 4.5rem);
+        }
+
+        @media (max-width: 1100px) {
+            .hero-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 4.5vw + 0.8rem, 4.8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            color: var(--cream-light);
+            margin-bottom: 1.25rem;
+            min-height: 2.3em;
+        }
+
+        .typewriter-cursor {
+            display: inline-block;
+            width: 4px;
+            height: 0.95em;
+            background: var(--burgundy-bright);
+            margin-left: 6px;
+            vertical-align: -0.06em;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--burgundy-bright), 0 0 20px var(--burgundy-accent);
+            animation: blinkCursor 0.8s infinite;
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .hero p {
+            max-width: 680px;
+            color: var(--cream-muted);
+            font-size: clamp(0.95rem, 0.8vw + 0.3rem, 1.15rem);
+            line-height: 1.7;
+        }
+
+        .hero p em {
+            color: var(--cream-beige);
+            font-style: italic;
+        }
+
+        .hero .scroll-hint {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--sage-grey);
+        }
+
+        /* Hero Right Side: Side-by-Side Profile Frame + Dossier Card */
+        .profile-dossier-wrapper {
+            display: flex;
+            align-items: stretch;
+            gap: clamp(1rem, 1.5vw, 1.5rem);
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .profile-dossier-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .profile-photo-frame {
+            width: clamp(200px, 16vw, 260px);
+            flex-shrink: 0;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--sage-border);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+            background: rgba(235, 228, 216, 0.035);
+        }
+
+        @media (max-width: 768px) {
+            .profile-photo-frame {
+                width: 100%;
+                max-width: 280px;
+                height: 320px;
+            }
+        }
+
+        .profile-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .profile-photo-frame:hover img {
+            transform: scale(1.03);
+        }
+
+        .profile-photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(22, 8, 14, 0.7) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* Dossier Card */
+        .dossier-card {
+            flex: 1;
+            background: rgba(235, 228, 216, 0.035);
+            border: 1px solid var(--sage-border);
+            border-radius: 20px;
+            padding: clamp(1.25rem, 1.8vw, 1.75rem);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .dossier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--sage-border);
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .dossier-meta h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--cream-light);
+            margin-bottom: 0.2rem;
+        }
+
+        .dossier-meta .dossier-role {
+            font-size: 0.85rem;
+            color: var(--cream-muted);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.65rem;
+            background: rgba(139, 38, 62, 0.25);
+            border: 1px solid var(--burgundy-bright);
+            border-radius: 20px;
+            color: #ff9cb7;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .status-pill:hover {
+            transform: scale(1.05);
+            background: rgba(139, 38, 62, 0.4);
+            box-shadow: 0 0 12px var(--burgundy-glow);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff5e87;
+            box-shadow: 0 0 8px #ff5e87;
+        }
+
+        /* 4 Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        .stat-box {
+            background: rgba(235, 228, 216, 0.025);
+            border: 1px solid var(--sage-border);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--sage-grey);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--cream-light);
+            margin-bottom: 0.15rem;
+        }
+
+        .stat-sub {
+            font-size: 0.75rem;
+            color: var(--cream-muted);
+        }
+
+        /* Slideshow Section */
+        .slideshow-section {
+            margin-bottom: clamp(2.5rem, 5vh, 4.5rem);
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--sage-grey);
+            margin-bottom: 0.35rem;
+            display: block;
+        }
+
+        .slideshow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .slideshow-header h2 {
+            font-size: clamp(1.4rem, 2vw + 0.5rem, 2.2rem);
+            font-weight: 700;
+            color: var(--cream-light);
+        }
+
+        .slideshow-subtitle {
+            font-size: 0.95rem;
+            color: var(--cream-muted);
+            margin-top: 0.25rem;
+        }
+
+        .slide-counter {
+            font-size: clamp(0.8rem, 1vw, 1rem);
+            color: var(--sage-grey);
+            font-family: monospace;
+        }
+
+        /* FIXED RESOLUTION SLIDESHOW CONTAINER (1920x1080 Locked Frame) */
+        .slideshow-container {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            max-width: 100%;
+            max-height: 80vh;
+            aspect-ratio: 16 / 9;
+            margin: 0 auto;
+            border-radius: clamp(12px, 1.5vw, 22px);
+            overflow: hidden;
+            background: #0d0408;
+            border: 1px solid var(--sage-border);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d0408;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            transform: scale(1.02);
+            transition: transform 6s ease-out;
+        }
+
+        .slide.active img {
+            transform: scale(1);
+        }
+
+        .slide-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: clamp(1.5rem, 3vw, 3rem) clamp(1rem, 2.5vw, 2.5rem);
+            background: linear-gradient(to top, rgba(22, 8, 14, 0.96) 0%, rgba(22, 8, 14, 0.65) 60%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .slide-title {
+            font-size: clamp(1.1rem, 1.5vw + 0.3rem, 1.6rem);
+            font-weight: 600;
+            color: var(--cream-light);
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+        }
+
+        .slide-desc {
+            font-size: clamp(0.85rem, 1vw, 1.05rem);
+            color: var(--cream-muted);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+            max-width: 900px;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(22, 8, 14, 0.65);
+            border: 1px solid var(--sage-border);
+            backdrop-filter: blur(10px);
+            color: var(--cream-light);
+            width: clamp(36px, 3.5vw, 48px);
+            height: clamp(36px, 3.5vw, 48px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            z-index: 5;
+        }
+
+        .slider-btn:hover {
+            background: var(--burgundy-accent);
+            border-color: var(--burgundy-bright);
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        .slider-btn.prev { left: clamp(0.75rem, 1.5vw, 1.5rem); }
+        .slider-btn.next { right: clamp(0.75rem, 1.5vw, 1.5rem); }
+
+        .slider-dots-wrapper {
+            position: absolute;
+            bottom: clamp(0.75rem, 1.5vw, 1.5rem);
+            right: clamp(1rem, 2vw, 2rem);
+            max-width: 50%;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 0.25rem;
+            z-index: 5;
+        }
+
+        .slider-dots-wrapper::-webkit-scrollbar { display: none; }
+
+        .slider-dots {
+            display: flex;
+            gap: 0.45rem;
+            align-items: center;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(235, 228, 216, 0.3);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--burgundy-bright);
+            box-shadow: 0 0 8px var(--burgundy-glow);
+            width: 22px;
+            border-radius: 6px;
+        }
+
+        .section-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--sage-border), transparent);
+            margin: clamp(2.5rem, 5vh, 4.5rem) 0;
+        }
+
+        /* Search Header & Card Grid */
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-header h2 {
+            font-size: clamp(1.4rem, 2vw + 0.5rem, 2.2rem);
+            font-weight: 700;
+            color: var(--cream-light);
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 380px;
+            padding: 0.85rem 1.25rem;
+            background: rgba(235, 228, 216, 0.05);
+            border: 1px solid var(--sage-border);
+            border-radius: 12px;
+            color: var(--cream-light);
+            font-size: 0.95rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--burgundy-bright);
+            background: rgba(235, 228, 216, 0.09);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(clamp(240px, 18vw, 300px), 1fr));
+            gap: clamp(1rem, 1.5vw, 1.5rem);
+        }
+
+        .card {
+            background: rgba(235, 228, 216, 0.04);
+            border: 1px solid var(--sage-border);
+            border-radius: clamp(10px, 1vw, 16px);
+            padding: clamp(1.2rem, 1.5vw, 1.6rem);
+            cursor: pointer;
+            backdrop-filter: blur(16px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 110px;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            background: rgba(139, 38, 62, 0.15);
+            border-color: var(--burgundy-bright);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .card-id {
+            font-size: 0.75rem;
+            color: var(--sage-grey);
+            font-family: monospace;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-name {
+            font-size: clamp(1rem, 1vw + 0.2rem, 1.25rem);
+            font-weight: 600;
+            color: var(--cream-beige);
+        }
+
+        .card-icon {
+            color: var(--burgundy-bright);
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .card:hover .card-icon {
+            opacity: 1;
+        }
+
+        /* Full Widescreen Expansion Rules */
+        .general-note-card,
+        .recommendation-card,
+        .message-section,
+        .contact-section {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* General Appreciation Banner (Full Width Content) */
+        .general-note-card {
+            background: linear-gradient(135deg, rgba(139, 38, 62, 0.18) 0%, rgba(34, 13, 22, 0.6) 100%);
+            border: 1px solid rgba(184, 58, 94, 0.3);
+            border-radius: clamp(14px, 1.5vw, 22px);
+            padding: clamp(2rem, 3.5vw, 3.5rem);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+        }
+
+        .general-note-card h3 {
+            font-size: clamp(1.3rem, 1.8vw, 1.8rem);
+            font-weight: 700;
+            color: var(--cream-light);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .general-note-card p {
+            color: var(--cream-muted);
+            font-size: clamp(0.95rem, 0.8vw + 0.3rem, 1.05rem);
+            line-height: 1.85;
+            margin-bottom: 1rem;
+            text-align: center;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .general-note-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* LinkedIn Recommendation Callout with QR */
+        .recommendation-card {
+            background: linear-gradient(135deg, rgba(139, 38, 62, 0.12) 0%, rgba(25, 11, 18, 0.6) 100%);
+            border: 1px solid var(--sage-border);
+            border-radius: clamp(14px, 1.5vw, 22px);
+            padding: clamp(2rem, 3.5vw, 3rem);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .recommendation-layout {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2.5rem;
+            text-align: left;
+            flex-wrap: wrap;
+        }
+
+        .recommendation-content {
+            flex: 1;
+            min-width: min(100%, 360px);
+        }
+
+        .recommendation-content h3 {
+            font-size: clamp(1.4rem, 2vw, 1.9rem);
+            font-weight: 700;
+            color: var(--cream-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .recommendation-content p {
+            color: var(--cream-muted);
+            font-size: clamp(0.95rem, 0.8vw + 0.3rem, 1.05rem);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
+
+        .network-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--cream-muted);
+            background: rgba(235, 228, 216, 0.05);
+            padding: 0.5rem 0.95rem;
+            border-radius: 8px;
+            border: 1px dashed var(--sage-border);
+            margin-bottom: 1.5rem;
+        }
+
+        .recommend-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            background: var(--burgundy-accent);
+            color: var(--cream-light);
+            text-decoration: none;
+            padding: 0.85rem 1.8rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px var(--burgundy-glow);
+        }
+
+        .recommend-btn:hover {
+            background: var(--burgundy-bright);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--burgundy-glow);
+        }
+
+        .qr-card-wrapper {
+            background: #ffffff;
+            padding: 1.25rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+            margin: 0 auto;
+        }
+
+        .qr-card-wrapper img {
+            width: 220px !important;
+            height: 220px !important;
+            display: block;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .qr-card-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--burgundy-accent);
+        }
+
+        @media (max-width: 768px) {
+            .recommendation-layout {
+                text-align: center;
+                justify-content: center;
+            }
+            .network-note {
+                justify-content: center;
+            }
+        }
+
+        /* Message Board Section */
+        .message-section {
+            background: rgba(235, 228, 216, 0.03);
+            border: 1px solid var(--sage-border);
+            border-radius: clamp(14px, 1.5vw, 22px);
+            padding: clamp(1.8rem, 3.5vw, 3.5rem);
+            margin-top: clamp(2.5rem, 5vh, 4rem);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .message-section h2 {
+            font-size: clamp(1.5rem, 2vw + 0.5rem, 2.2rem);
+            font-weight: 700;
+            color: var(--cream-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .message-section p {
+            color: var(--cream-muted);
+            font-size: clamp(0.9rem, 0.8vw + 0.3rem, 1rem);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--sage-grey);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.85rem 1.15rem;
+            background: rgba(235, 228, 216, 0.04);
+            border: 1px solid var(--sage-border);
+            border-radius: 10px;
+            color: var(--cream-light);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .form-textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--burgundy-bright);
+            background: rgba(235, 228, 216, 0.08);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--burgundy-bright), var(--burgundy-accent));
+            border: none;
+            color: var(--cream-light);
+            padding: 0.9rem 2.2rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px var(--burgundy-glow);
+        }
+
+        .submit-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-status {
+            margin-top: 1.5rem;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeInStatus 0.3s ease;
+        }
+
+        @keyframes fadeInStatus {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-status.success {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(141, 154, 145, 0.2);
+            border: 1px solid var(--sage-grey);
+            color: var(--cream-light);
+        }
+
+        .form-status.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        /* Contact Details Section */
+        .contact-section {
+            width: 100%;
+            max-width: 1280px;
+            margin: clamp(3rem, 5vh, 4.5rem) auto 0;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            font-size: clamp(1.5rem, 2vw + 0.5rem, 2.2rem);
+            font-weight: 700;
+            color: var(--cream-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-section p {
+            color: var(--cream-muted);
+            font-size: clamp(0.9rem, 0.8vw + 0.3rem, 1rem);
+            margin-bottom: 2rem;
+        }
+
+        .contact-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .contact-card {
+            background: rgba(235, 228, 216, 0.04);
+            border: 1px solid var(--sage-border);
+            border-radius: 14px;
+            padding: 1.5rem 1rem;
+            text-decoration: none;
+            color: var(--cream-light);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 190px;
+            flex-shrink: 0;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-4px);
+            background: rgba(139, 38, 62, 0.16);
+            border-color: var(--burgundy-bright);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .contact-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin-bottom: 0.25rem;
+            font-size: 1.75rem;
+            line-height: 1;
+        }
+
+        .contact-icon svg {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+
+        .contact-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--sage-grey);
+            font-weight: 600;
+        }
+
+        .contact-value {
+            font-size: 0.88rem;
+            color: var(--cream-beige);
+            font-weight: 500;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        /* Copy Toast */
+        .copy-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--burgundy-bright);
+            color: #ffffff;
+            padding: 0.65rem 1.4rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Site Footer */
+        .site-footer {
+            margin-top: clamp(3rem, 5vh, 4.5rem);
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--sage-border);
+            text-align: center;
+        }
+
+        .site-footer p {
+            font-size: 0.8rem;
+            color: var(--sage-grey);
+            letter-spacing: 0.04em;
+        }
+
+        /* Modal Overlay & Dialog */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 4, 7, 0.88);
+            backdrop-filter: blur(14px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(1rem, 3vw, 2.5rem);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 999;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: linear-gradient(145deg, #2a111c, #1a0b12);
+            border: 1px solid var(--sage-border);
+            border-radius: clamp(14px, 1.5vw, 20px);
+            width: min(640px, 94vw);
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: clamp(1.5rem, 3vw, 2.5rem);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+            position: relative;
+            transform: scale(0.96);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        /* Corner Close Button (✕) */
+        .modal-close-corner {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: rgba(235, 228, 216, 0.08);
+            border: 1px solid var(--sage-border);
+            color: var(--cream-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close-corner:hover {
+            background: var(--burgundy-bright);
+            color: #ffffff;
+            border-color: var(--burgundy-bright);
+            transform: scale(1.08);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--sage-border);
+            padding-bottom: 1rem;
+            padding-right: 2.5rem;
+        }
+
+        .modal-badge {
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.65rem;
+            background: rgba(139, 38, 62, 0.25);
+            border: 1px solid var(--burgundy-bright);
+            border-radius: 4px;
+            color: #ff9cb7;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .modal-badge:hover {
+            background: var(--burgundy-bright);
+            color: #ffffff;
+        }
+
+        .modal-author {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--sage-grey);
+        }
+
+        .modal-name {
+            font-size: clamp(1.5rem, 2vw + 0.5rem, 2.2rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.25rem;
+            color: var(--cream-light);
+        }
+
+        .modal-note {
+            font-size: clamp(0.95rem, 0.8vw + 0.3rem, 1.15rem);
+            line-height: 1.8;
+            color: var(--cream-muted);
+            margin-bottom: 2rem;
+            white-space: pre-line;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--sage-border);
+            padding-top: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.65rem;
+            align-items: center;
+        }
+
+        .download-btn {
+            background: rgba(139, 38, 62, 0.35);
+            border: 1px solid var(--burgundy-bright);
+            color: var(--cream-light);
+            padding: 0.5rem 1.05rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .download-btn:hover {
+            background: var(--burgundy-bright);
+            color: #ffffff;
+            box-shadow: 0 0 15px var(--burgundy-glow);
+            transform: translateY(-1px);
+        }
+
+        .modal-tagline {
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--sage-grey);
+        }
+
+        .close-btn {
+            background: rgba(235, 228, 216, 0.1);
+            border: 1px solid var(--sage-border);
+            color: var(--cream-light);
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: var(--burgundy-accent);
+            border-color: var(--burgundy-bright);
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- Audio Player -->
+<audio id="bgAudio" loop preload="auto">
+    <source src="farewell-song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Floating Audio Button -->
+<button id="musicToggleBtn" class="music-toggle-btn" onclick="toggleAudio()" aria-label="Toggle Music">
+    <span id="musicIcon">🔇</span>
+    <span id="musicLabel">Turn up the volume & feel the moment 🎧</span>
+</button>
+
+<div class="container">
+    <!-- Hero Section (Split Layout) -->
+    <div class="hero-layout">
+        <section class="hero">
+            <h1><span id="typewriterText"></span><span class="typewriter-cursor" id="typewriterCursor"></span></h1>
+            <p>Some journeys end, but the people and moments that made them meaningful stay with us. Before I move forward, I wanted to leave a small note for the people who made this journey memorable. I'm taking away so many lessons from here, but the most important one will always be: <em>never forget the people who helped you get where you are. And you all will always be those people for me.</em> ❤️</p>
+            <div class="scroll-hint"></div>
+        </section>
+
+        <!-- Profile Photo Frame + Journey Dossier Card (Side-by-Side) -->
+        <div class="profile-dossier-wrapper">
+            <!-- Profile Photo Box -->
+            <div class="profile-photo-frame">
+                <img src="images/profile.jpg" alt="Parichay Arora Profile Picture" onerror="this.src='images/1.jpg'">
+                <div class="profile-photo-overlay"></div>
+            </div>
+
+            <!-- Dossier Details -->
+            <div class="dossier-card">
+                <div class="dossier-header">
+                    <div class="dossier-meta">
+                        <h3>Parichay Arora</h3>
+                        <div class="dossier-role">Signing off from Wipro</div>
+                    </div>
+                    <div class="status-pill" onclick="triggerConfetti()" title="Click to celebrate!">
+                        <span class="status-dot"></span> Final Working Day 🎉
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Chapters Written</div>
+                        <div class="stat-value">30 Months</div>
+                        <div class="stat-sub">Of hustle and grit</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Skill Curve</div>
+                        <div class="stat-value">Leveled Up</div>
+                        <div class="stat-sub">Sharpened by the best around me</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Daily Recharge</div>
+                        <div class="stat-value">Banter & Walks</div>
+                        <div class="stat-sub">Cafeteria laughs, Cyberhub strolls & Office hours with Dan</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Next Chapter</div>
+                        <div class="stat-value">Loading... ✦</div>
+                        <div class="stat-sub">New adventures ahead</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slideshow Section (Fixed Frame 1920x1080) -->
+    <section class="slideshow-section">
+        <span class="section-label">Moments Together</span>
+        <div class="slideshow-header">
+            <div>
+                <h2>A Look Back</h2>
+                <div class="slideshow-subtitle">Swipe or click through to find yourself in the memories I'm taking with me.</div>
+            </div>
+            <span class="slide-counter" id="slideCounter">1 / 28</span>
+        </div>
+
+        <div class="slideshow-container" id="slideshowContainer">
+            <div id="slidesTrack"></div>
+
+            <button class="slider-btn prev" onclick="prevSlide()" aria-label="Previous Slide">&#10094;</button>
+            <button class="slider-btn next" onclick="nextSlide()" aria-label="Next Slide">&#10095;</button>
+
+            <div class="slider-dots-wrapper">
+                <div class="slider-dots" id="sliderDots"></div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Notes Search & Grid (30 Teammates) -->
+    <div class="search-header">
+        <div>
+            <span class="section-label">A Few Words</span>
+            <h2>For Each of You</h2>
+        </div>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search your name..." onkeyup="filterCards()">
+    </div>
+
+    <div class="grid" id="cardGrid"></div>
+
+    <hr class="section-divider">
+
+    <!-- General Message Banner (Centered Head & Full-Width Text) -->
+    <div class="general-note-card">
+        <h3>To everyone I couldn’t name individually ✦</h3>
+        <p>If your name didn't make the cards above, blame my spreadsheet skills, not my memory! Working at Wipro wouldn't have been half as meaningful or half as fun without each of you.</p>
+        <p>From quick floor chats and chai breaks to surviving Quarter end deliverables, every single interaction helped shape a better version of me. I wish each and every one of you the absolute best in achieving great heights.</p>
+        <p>Whenever you need a sounding board, a second pair of eyes, or just someone to catch up with, I'm always around. Don't be a stranger, my coordinates are right below.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- LinkedIn Recommendation Callout with Local QR Code -->
+    <div class="recommendation-card">
+        <div class="recommendation-layout">
+            <div class="recommendation-content">
+                <span class="section-label">A Quick Favor</span>
+                <h3>A Few Words on LinkedIn?</h3>
+                <p>If you enjoyed teaming up, sharing desk space, or bouncing ideas together, dropping a brief recommendation on LinkedIn would mean the world to me as I step into my next chapter.</p>
+                
+                <div class="network-note">
+                    <span>📱</span>
+                    <span>Viewing from a office laptop? Scan the QR code on your phone since LinkedIn is restricted on office devices.</span>
+                </div>
+
+                <div>
+                    <a href="https://www.linkedin.com/in/parichayarora/" target="_blank" rel="noopener noreferrer" class="recommend-btn">
+                        <span>Open on LinkedIn</span> ↗
+                    </a>
+                </div>
+            </div>
+
+            <!-- LinkedIn Profile QR Code Image from images/ folder -->
+            <div class="qr-card-wrapper">
+                <img src="images/linkedinURL.jpg" alt="LinkedIn Profile QR Code">
+                <span class="qr-card-label">Scan via Phone</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Drop Section -->
+    <section class="message-section">
+        <span class="section-label">Stay in Touch</span>
+        <h2>Leave a Note</h2>
+        <p>Drop a farewell message, memory, or your contact details. It will be delivered directly to my private inbox.</p>
+
+        <form id="farewellForm" onsubmit="handleFormSubmit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="senderName">Your Name</label>
+                    <input class="form-input" type="text" id="senderName" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="senderEmail">Your Email / LinkedIn (Optional)</label>
+                    <input class="form-input" type="text" id="senderEmail" name="email" placeholder="contact@email.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="senderMsg">Your Note / Memory</label>
+                <textarea class="form-textarea" id="senderMsg" name="message" placeholder="Write your farewell note, inside joke, or wishes here..." required></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" class="submit-btn">
+                <span>Send Note</span> ✦
+            </button>
+            <div id="formStatus" class="form-status"></div>
+        </form>
+    </section>
+
+    <!-- Contact Details Section with Click-to-Copy -->
+    <section class="contact-section">
+        <span class="section-label">Connect</span>
+        <h2>Where to Find Me</h2>
+        <p>Let's stay connected beyond office walls. Click to copy or reach out anytime.</p>
+
+        <div class="contact-grid">
+            <div class="contact-card" onclick="copyContactText('+917503463755', 'Phone number copied!')">
+                <span class="contact-icon">📞</span>
+                <span class="contact-title">Phone / WhatsApp</span>
+                <span class="contact-value">+91 7503463755</span>
+            </div>
+
+            <div class="contact-card" onclick="copyContactText('arora1328@gmail.com', 'Email address copied!')">
+                <span class="contact-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.548l8.073-6.055C21.69 2.28 24 3.434 24 5.457z" fill="#EA4335"/>
+                        <path d="M0 5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.548v7.092L0 8.182V5.457z" fill="#C5221F"/>
+                        <path d="M24 5.457c0-2.023-2.309-3.178-3.927-1.964L12 9.548v7.092l12-8.458V5.457z" fill="#4285F4"/>
+                    </svg>
+                </span>
+                <span class="contact-title">Email</span>
+                <span class="contact-value">arora1328@gmail.com</span>
+            </div>
+
+            <a href="https://instagram.com/parichay_arora" target="_blank" rel="noopener noreferrer" class="contact-card">
+                <span class="contact-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#f09433"/>
+                                <stop offset="25%" stop-color="#e6683c"/>
+                                <stop offset="50%" stop-color="#dc2743"/>
+                                <stop offset="75%" stop-color="#cc2366"/>
+                                <stop offset="100%" stop-color="#bc1888"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" fill="url(#igGrad)"/>
+                    </svg>
+                </span>
+                <span class="contact-title">Instagram</span>
+                <span class="contact-value">@parichay_arora</span>
+            </a>
+
+            <a href="https://linkedin.com/in/parichayarora" target="_blank" rel="noopener noreferrer" class="contact-card">
+                <span class="contact-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#b83a5e">
+                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z"/>
+                    </svg>
+                </span>
+                <span class="contact-title">LinkedIn</span>
+                <span class="contact-value">in/parichayarora</span>
+            </a>
+
+            <a href="https://yourwebsite.com" target="_blank" rel="noopener noreferrer" class="contact-card">
+                <span class="contact-icon">🌐</span>
+                <span class="contact-title">Website</span>
+                <span class="contact-value">https://parichay-arora.github.io/</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer Line -->
+    <footer class="site-footer">
+        <p>© 2026 Parichay Arora. All rights reserved.</p>
+    </footer>
+</div>
+
+<!-- Modal Dialog -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal">
+        <button class="modal-close-corner" onclick="closeModal()" aria-label="Close Note">✕</button>
+        <div class="modal-header">
+            <span class="modal-badge" onclick="triggerConfetti()" title="Click to celebrate!">Personal Note ✦</span>
+            <span class="modal-author" id="modalAuthor">Parichay Arora</span>
+        </div>
+        <h2 class="modal-name" id="modalName">Name</h2>
+        <p class="modal-note" id="modalNote">Message goes here...</p>
+        <div class="modal-footer">
+            <span class="modal-tagline">With Appreciation</span>
+            <div class="modal-actions">
+                <button class="download-btn" onclick="downloadKeepsake()" title="Save this note as a PNG keepsake card">
+                    <span>🖼️</span> Save My Note (PNG)
+                </button>
+                <button class="close-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast for Click-to-Copy -->
+<div id="copyToast" class="copy-toast"></div>
+
+<script>
+    const SENDER_NAME = "Parichay Arora";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTUhNpDsBFszv9CKfbPGY5Ge5z9K7yHgR-MBdWvA1Tb1wftBlSeK6YeBwUD9O1bA7csw/exec";
+
+    let currentActiveNote = null;
+
+    /* --- Audio Controls --- */
+    const audio = document.getElementById('bgAudio');
+    const musicBtn = document.getElementById('musicToggleBtn');
+    const musicIcon = document.getElementById('musicIcon');
+    const musicLabel = document.getElementById('musicLabel');
+
+    let isAudioPlaying = false;
+
+    function toggleAudio() {
+        if (isAudioPlaying) {
+            audio.pause();
+            isAudioPlaying = false;
+            musicBtn.classList.remove('playing');
+            musicIcon.innerText = '🔇';
+            musicLabel.innerText = 'Turn up the volume & feel the moment 🎧';
+        } else {
+            audio.play().then(() => {
+                isAudioPlaying = true;
+                musicBtn.classList.add('playing');
+                musicIcon.innerText = '🎵';
+                musicLabel.innerText = 'Mute Music';
+            }).catch(() => {});
+        }
+    }
+
+    function initAudioOnFirstInteraction() {
+        if (!isAudioPlaying) {
+            audio.play().then(() => {
+                isAudioPlaying = true;
+                musicBtn.classList.add('playing');
+                musicIcon.innerText = '🎵';
+                musicLabel.innerText = 'Mute Music';
+            }).catch(() => {});
+        }
+        window.removeEventListener('click', initAudioOnFirstInteraction);
+        window.removeEventListener('keydown', initAudioOnFirstInteraction);
+    }
+
+    window.addEventListener('click', initAudioOnFirstInteraction, { once: true });
+    window.addEventListener('keydown', initAudioOnFirstInteraction, { once: true });
+
+    /* --- Confetti Engine --- */
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimationId = null;
+
+    function resizeConfettiCanvas() {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeConfettiCanvas);
+    resizeConfettiCanvas();
+
+    function triggerConfetti() {
+        const colors = ['#b83a5e', '#8b263e', '#ebe4d8', '#ff9cb7', '#f7f3ec', '#8d9a91', '#d4af37'];
+        for (let i = 0; i < 85; i++) {
+            confettiParticles.push({
+                x: window.innerWidth / 2 + (Math.random() - 0.5) * 400,
+                y: window.innerHeight * 0.4 + (Math.random() - 0.5) * 120,
+                r: Math.random() * 5 + 3,
+                d: Math.random() * 85,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                tilt: Math.floor(Math.random() * 10) - 10,
+                tiltAngleIncremental: (Math.random() * 0.07) + 0.05,
+                tiltAngle: 0,
+                speedY: Math.random() * -7 - 4,
+                speedX: (Math.random() - 0.5) * 6,
+                opacity: 1
+            });
+        }
+        if (!confettiAnimationId) renderConfetti();
+    }
+
+    function renderConfetti() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        confettiParticles.forEach((p, idx) => {
+            p.tiltAngle += p.tiltAngleIncremental;
+            p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2 + 1.5;
+            p.x += Math.sin(p.d) + p.speedX;
+            p.speedY += 0.12;
+            p.y += p.speedY;
+            p.tilt = Math.sin(p.tiltAngle - (idx / 3)) * 15;
+            p.opacity -= 0.007;
+
+            ctx.beginPath();
+            ctx.lineWidth = p.r;
+            ctx.strokeStyle = p.color;
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.moveTo(p.x + p.tilt + (p.r / 2), p.y);
+            ctx.lineTo(p.x + p.tilt, p.y + p.tilt + (p.r / 2));
+            ctx.stroke();
+        });
+
+        confettiParticles = confettiParticles.filter(p => p.opacity > 0 && p.y < confettiCanvas.height);
+
+        if (confettiParticles.length > 0) {
+            confettiAnimationId = requestAnimationFrame(renderConfetti);
+        } else {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confettiAnimationId = null;
+        }
+    }
+
+    /* --- Infinite Looping Typewriter Effect --- */
+    const textTarget = document.getElementById("typewriterText");
+    const fullHeading = "Before I\nSign Off.";
+    let charIndex = 0;
+    let isDeleting = false;
+
+    function loopTypeWriter() {
+        const currentSub = fullHeading.slice(0, charIndex);
+        textTarget.innerHTML = currentSub.replace("\n", "<br>");
+
+        if (!isDeleting) {
+            charIndex++;
+            if (charIndex > fullHeading.length) {
+                isDeleting = true;
+                setTimeout(loopTypeWriter, 3000);
+                return;
+            }
+            const speed = 75 + Math.random() * 45;
+            setTimeout(loopTypeWriter, speed);
+        } else {
+            charIndex--;
+            if (charIndex === 0) {
+                isDeleting = false;
+                setTimeout(loopTypeWriter, 800);
+                return;
+            }
+            setTimeout(loopTypeWriter, 35);
+        }
+    }
+
+    /* --- Slideshow Data (Images Array) --- */
+    const slidesData = [
+        { img: "images/1.jpg", title: "Day One in Wipro", desc: "First picture at Wipro with college mates on orientation day." },
+        { img: "images/2.jpg", title: "My Gurudev", desc: "The person I owe everything to for guiding me all along." },
+        { img: "images/3.jpg", title: "First Team Party", desc: "My very first celebration together with the Dreamteam." },
+        { img: "images/4.jpg", title: "Rishikesh Trip 2024", desc: "Our first and last offsite together. Thank you Aditya for making it happen." },
+        { img: "images/5.jpg", title: "The Party We Missed", desc: "When they went ahead to the quarterly party without me and my team." },
+        { img: "images/6.jpg", title: "Our Own Celebration", desc: "We did not let that stop us, so we went and threw our own party." },
+        { img: "images/7.jpg", title: "Office Colleagues? Nah, Friends for Life", desc: "They say you can't make real friends at work, but they never met this group." },
+        { img: "images/8.jpg", title: "BREDS Finance Team v1", desc: ""},
+        { img: "images/9.jpg", title: "BREDS Finance Team v2", desc: ""},
+        { img: "images/29.jpg", title: "Shubham Rakhunde", desc: "My teammate holding down the fort in Bangalore. We never got to meet in person, but we will catch up soon brother." },
+        { img: "images/Dan2.jpg", title: "The Man, The Myth, The Legend, The Final Boss - Dan", desc: "The most special person on our team. You never made work feel stressful and created such an easygoing vibe. Everyone dreams of a client like you." },
+        { img: "images/12.jpg", title: "A 5-Kilometer Walk", desc: "I said no to the scooty ride and made everyone walk four to five kilometers instead." },
+        { img: "images/14.jpg", title: "Day One-Ish", desc: "From Sushi (Wasabi) snacking to Bullet rides, we made the craziest memories together." },
+        { img: "images/15.jpg", title: "Best Office Buddies", desc: "This photo needs no introduction. Best Friends for life." },
+        { img: "images/16.jpg", title: "CyberHub Coffee Breaks", desc: "When coffee beomes neccessary in between our cyberhub walks (Not work)" },
+        { img: "images/17.jpg", title: "My First iPhone", desc: "So grateful to Malhar for going through so much immigration trouble and bringing me my first iPhone." },
+        { img: "images/18.jpg", title: "The Mushroom Tart", desc: "When ordering and tasting the mushroom tart became mandatory for everyone." },
+        { img: "images/20.jpg", title: "Team Party Moments", desc: "Another great picture from our team celebration." },
+        { img: "images/21.jpg", title: "CyberHub Strollers", desc: "Three of us, taking a walk around CyberHub or chilling in the cafeteria." },
+        { img: "images/22.jpg", title: "Third Floor Farewell", desc: "Our final photo on the 3rd floor, and my first and only picture with Himalaya." },
+        { img: "images/23.jpg", title: "Twinning on Purpose", desc: "This was not a coincidence at all. I planned this, just to get a picture for the memories." },
+        { img: "images/31.jpg", title: "Not again, please", desc: "This one was definitely not on purpose. It is officially time to retire this legendary Snitch shirt." },
+        { img: "images/32.jpg", title: "FOREians", desc: "Placed together from college into the same company, and having them around felt like family at workplace. The picture would have been complete if Rishabh was there that day." },
+        { img: "images/24.jpg", title: "My Favorite Spot - Taco Bell", desc: "How could I miss to mention my go-to place, or in Gurkirat's words: 'Mere ghar ki dukaan'." },
+        { img: "images/25.jpg", title: "The Locker Room Corner", desc: "Our absolute favorite spot to relax, and have our secret talks. Oh yes, Uncle Ji Namaste" },
+        { img: "images/26.jpg", title: "The Cab Crew", desc: "How could I ever miss mentioning my amazing everyday cab mates?" },
+        { img: "images/27.jpg", title: "Cab wali Family", desc: "I could not have survived the daily commute without them. They made cab rides fun and gave me a reason to love coming to the office." },
+        { img: "images/28.jpg", title: "Last Team Lunch", desc: "Last but not least, a great lunch outing. I really wish we could have gone out together more often." },
+        { img: "images/30.jpg", title: "Office Hours ? Nah, Daily Dose of Happiness", desc: "" },
+    ];
+
+    /* --- Team Notes Data (Your 30 Custom Teammate Notes) --- */
+    const teamNotes = [
+        { id: "01", name: "Aditya Raj Gulati", note: "Aditya, thank you for being such a lively presence on the floor and making things happen, especially our unforgettable Rishikesh offsite! Thanks for bringing me into the Locker Room Club. Wishing you continuous growth and the absolute best ahead!" },
+        { id: "02", name: "Akshay Gopal", note: "I really wish we could have more office hours calls. It was genuinely fun collaborating with you and learning alongside you. Wishing you all the very best for everything ahead!" },
+        { id: "03", name: "Alok Shukla", note: "Bade bhai, you have always taken care of me like a younger brother. You were never just a cab mate to me, you became my safe space. There was always this quiet comfort knowing 'Alok bhai saath mein hain.' Thank you so much for putting up with me and guiding me all along. Stay blessed, bhai!" },
+        { id: "04", name: "Amir Fazal", note: "I want to sincerely thank you for organizing the weekly Knowledge Sharing Sessions. Those sessions were truly the catalyst that took my learning curve up. Thank you for your guidance, continuous support, and for being such an exceptional mentor and manager to me." },
+        { id: "05", name: "Anirban Bera", note: "Anir bhai, I always felt warm and welcome in your company. I learned so much from you, brother, and what you have achieved with your transformation is truly inspiring. Keep it up, bhai. Rooting for your continued success!" },
+        { id: "06", name: "Bhumika Gulati", note: "Like I've always told you, I have rarely met someone with such a pure soul and genuinely good intentions. I couldn't find anyone like you in FORE, nor in Wipro, and honestly, wherever I go, that title will always belong to you. Thank you so much, Bhumika. Connecting with you always felt so warm and heartfelt. Wishing you immense success, peace, and happiness in everything!" },
+        { id: "07", name: "BREDS Ops", note: "Kunal, Nidhi, Raghav, Sakshi, Shivam, Vanshika & Vidushi — thank you all for the great time! Even though our shared laughs were short, they were always so much fun. It was a true pleasure working alongside you. God bless you all!" },
+        { id: "08", name: "Cab Mates", note: "Abhishek, Avinash, Harsh, Jass, Mohit & Rishabh — you all made my travel time fun, entertaining, and memorable too. I bet I couldn't have found better cabmates anywhere. Always so cooperative and engaging. God bless you all!" },
+        { id: "09", name: "Chirag Kansal", note: "A truly friendly face in a brand-new office. I still remember reaching out to you for favors before I had even set foot inside the building, and you helped me from that day onward, not just with settling in, but constantly looking out for me. Thank you so much, bhai! God bless you." },
+        { id: "10", name: "Daniel McNulty", note: "I don't even know where to start or what to say. My professional journey is largely defined by everything I’ve learned from you, a true industry legend and the ultimate underdog. More than a mentor or colleague, I consider you a close friend, and not being able to hop on our office hour calls is going to leave a huge void. I’m going to miss you immensely, Dan. If I had one wish, I would definitely ask for the chance to work alongside you again. Thank you for everything!" },
+        { id: "11", name: "Gaurav Garg", note: "Always the chill person to have a pleasant conversation and a good laugh with. Thank you, Gaurav bhai, for making my time here so lighthearted and happy." },
+        { id: "12", name: "Gurkirat Kaur", note: "Let's be honest: the person happiest about me leaving is definitely you. Jokes apart, it was genuinely fun annoying you and picking silly fights. Thank you so much for putting up with my nonsense and still being kind to me. But don't worry, I promise to still 'forget' to invite you to plans and break any life updates to you last. All the best for your future!" },
+        { id: "13", name: "Harsh Dhupar", note: "Harsh, I am out of words honestly, you were simply a brother to me here. Bhai, ek aur baar chalein tehelne? From our CyberHub walks to our shared love for tacos, I enjoyed every single break with you.  I truly enjoyed every minute of your company, and I can't wait to see you chase your dreams and achieve massive things. Gonna miss you bhai!" },
+        { id: "14", name: "Hasan Minhal", note: "Please don't reach out to me if you want to purchase my iPhone or attempt to steal my best friend away, because neither is happening in this lifetime. Easily the most practical person I have met at Wipro. Stay true to yourself and stay blessed!" },
+        { id: "15", name: "Himalaya Chauhan", note: "Even though our conversations were few, it was always a delight talking to you. You are one of the most straightforward and razor-focused guys I've come across, with tremendous potential to achieve big things." },
+        { id: "16", name: "Jitesh Kadam", note: "Bhai, thank you for the genuine compliments and encouragement; they meant more to me than you know. Collaborating with you in our day-to-day activities was an absolute pleasure. And please forgive me if I was ever rude or impatient with you! I wish you all the best for the future and, you can always reach out if you ever need help." },
+        { id: "17", name: "Lisa Liu", note: "Hey Lisa, even though our collaboration was brief, I truly enjoyed working on things with you. Wishing you wonderful milestones and success ahead!" },
+        { id: "18", name: "Malhar Parmar", note: "Do you remember, I was the very first person you met from this team! I came down to reception to handle your Day 1 formalities and bring you up to our sitting bay. I will forever be thankful to you for bringing me my first iPhone. I pray you get sent to Dubai many more times so I can trouble you for upgrades. Stay blessed and good luck, Malhar bhai!" },
+        { id: "19", name: "Nikhil Handuja", note: "Nikhil bhai, more than half the office doesn't know this, but our friendship goes back over 10 years. It was pure luck and good fortune to have one of my closest friends from undergrad working right beside me in the same department. I really was happy to see you here. God bless you & All the best, bhai!" },
+        { id: "20", name: "Paramjeet Singh", note: "Sir, because of your blessings, I am moving to the next chapter in my life, and I hope those blessings continue! Connecting with you and talking about Punjabi music and the industry between our cap calls and MAF tasks, I enjoyed every bit of it. Good luck bhai, stay blessed, and keep spreading positivity and blessings to everyone around you!" },
+        { id: "21", name: "Payal Jain", note: "Our automation rockstar! It was truly a delight and a wonderful experience working with you on our transformation project. Ironically, you being on the IT side, I ended up learning so much more finance just by collaborating with you! Wishing you massive milestones ahead!" },
+        { id: "22", name: "Rishabh Gupta", note: "Rishabh Bhai, I really wish we had crossed paths back in college! You are someone who is humble and genuinely down-to-earth to everyone around you. You are an absolute gem, bhai. Thank you for always being so kind, supportive, and warm along the way. Wishing you steady growth, huge milestones, and only the very best ahead!" },
+        { id: "23", name: "Riya Girdhar", note: "People like you are naturally reserved and keep their circle small, so I consider myself truly lucky and blessed to be in it. Because once you call someone a friend, fir ap dil se sab kuch nibhate ho and will effortlessly go out of your way for them. F.R.E.I.N.D.S, food, Miniso, or Harry Potter, our conversations never ran out of these things! You were always my go-to person whether I needed a serious discussion or just fun banter. I’m genuinely grateful to have met you and become close friends. Thanks for making this chapter at Wipro so much easier and brighter. I'm going to miss you!" },
+        { id: "24", name: "Saina Behera", note: "You were the one who motivated and encouraged me the most. Thank you for having my back and cheering me up whenever things felt overwhelming. Wishing you an incredible journey ahead at Wipro!" },
+        { id: "25", name: "Sajal Thakkar", note: "Bhai, honestly we became close right around the time I was preparing to sign off, but the locker room banter and non-stop bakchodi were top-tier. I could always just be myself around you and share anything. Turf par kab chalna hai fir?, Ab bhai weekend ka plan kario. Good luck and stay blessed, bhai!" },
+        { id: "26", name: "Saud Rehman", note: " Saud, thank you for introducing me to those little drops of heaven—the Nutella Croissant. Without a doubt, it's the best thing one can have in CyberHub! It was an absolute pleasure spending time with you, bhai. Rooting for your continued success!" },
+        { id: "27", name: "Seth Brenen", note: "Seth, thank you for your leadership, clarity, and thoughtful guidance across our deliverables. Collaborating with you was a great learning experience. Wishing you all the best!" },
+        { id: "28", name: "Shabab Chaudhary", note: "Shabab… where do I even start? I’m going to miss all our CyberHub walks, random conversations, endless gossip, and those moments where a 'quick walk' somehow turned into a full-blown discussion about life. You came into my life as a colleague, became my best friend in the office, and somewhere along the way, upgraded yourself to a best friend in life. Office may have brought us together, but I know this friendship is going far beyond office. I’m going to miss having you around every day. Just because I’m leaving doesn’t mean you’re getting rid of me. Thank you for being there, for listening, for laughing with me, and for making this journey so much more memorable. I’m going to miss you, bhai. More than I can probably put into words." },
+        { id: "29", name: "Shubham Rakhunde", note: "I really wish we could have worked together in an offline setting, but collaborating with you was truly a delight. I was hoping we could meet at least once in person before my sign-off, but we will definitely catch up whenever our paths cross, brother. Keep shining! God bless you" },
+        { id: "30", name: "Tanya Ludhwani", note: "My fellow iPhone buddy and the one with whom I shared a few books during my reading spree! Honestly, I would have grabbed the opportunity to work directly within your team. You are a natural leader with the potential to do wonders. All the best for your next chapter in life, and stay blessed!" },
+        { id: "31", name: "Vishal Sharma", note: "Vishal, it was you who introduced me to the industry, the processes, and pretty much everything I was clueless about in the beginning! You trained me with an unbelievable amount of patience and answered even my 'silly' questions without ever making me feel silly. I honestly don’t think I could have found a better lead anywhere else. You supported me from Day 1, always had my back, and made learning feel comfortable. And a huge reason why the team culture is so amazing is YOU. Believe me, being part of such a supportive team is something everyone dreams of, and you are genuinely making that happen for your people. Thank you for everything!" },
+        { id: "32", name: "Vishisht Soni", note: "First and foremost, the biggest thank you to you, Gurudev, for giving me the opportunity and believing in me enough to select me for your team. You truly laid the stepping stone for my career, and no matter where life takes me from here, I will always stay connected to the one who planted my roots. You didn’t just give me a chance, you gave me a starting point, direction, and purpose. Thank you for everything!" }
+    ];
+
+    document.getElementById('modalAuthor').innerText = SENDER_NAME;
+
+    /* --- Slideshow Controller (Clean 6-Second Auto-Advance) --- */
+    const slidesTrack = document.getElementById('slidesTrack');
+    const dotsContainer = document.getElementById('sliderDots');
+    const slideCounter = document.getElementById('slideCounter');
+    const slideshowContainer = document.getElementById('slideshowContainer');
+
+    let currentSlide = 0;
+    let slideTimer;
+
+    slidesData.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = `slide ${index === 0 ? 'active' : ''}`;
+        slide.innerHTML = `
+            <img src="${item.img}" alt="${item.title}" loading="lazy">
+            <div class="slide-overlay">
+                <div class="slide-title">${item.title}</div>
+                <div class="slide-desc">${item.desc}</div>
+            </div>
+        `;
+        slidesTrack.appendChild(slide);
+
+        const dot = document.createElement('div');
+        dot.className = `dot ${index === 0 ? 'active' : ''}`;
+        dot.onclick = () => goToSlide(index);
+        dotsContainer.appendChild(dot);
+    });
+
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+
+    function updateSlides() {
+        slides.forEach((slide, idx) => {
+            slide.classList.toggle('active', idx === currentSlide);
+            dots[idx].classList.toggle('active', idx === currentSlide);
+        });
+        slideCounter.innerText = `${currentSlide + 1} / ${slidesData.length}`;
+
+        const dotsWrapper = document.querySelector('.slider-dots-wrapper');
+        const activeDot = dots[currentSlide];
+        if (dotsWrapper && activeDot) {
+            dotsWrapper.scrollTo({
+                left: activeDot.offsetLeft - dotsWrapper.offsetWidth / 2,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slidesData.length;
+        updateSlides();
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slidesData.length) % slidesData.length;
+        updateSlides();
+    }
+
+    function goToSlide(idx) {
+        currentSlide = idx;
+        updateSlides();
+        resetTimer();
+    }
+
+    function startTimer() {
+        slideTimer = setInterval(nextSlide, 6000);
+    }
+
+    function resetTimer() {
+        clearInterval(slideTimer);
+        startTimer();
+    }
+
+    startTimer();
+    updateSlides();
+
+    /* Keyboard Navigation */
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        if (document.getElementById('modalOverlay').classList.contains('active')) return;
+        if (e.key === 'ArrowRight') { nextSlide(); resetTimer(); }
+        if (e.key === 'ArrowLeft') { prevSlide(); resetTimer(); }
+    });
+
+    /* --- Cards Controller --- */
+    const grid = document.getElementById('cardGrid');
+
+    function renderCards(data) {
+        grid.innerHTML = '';
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => openModal(item);
+            card.innerHTML = `
+                <div class="card-top">
+                    <span class="card-id">${item.id}</span>
+                </div>
+                <div class="card-bottom">
+                    <span class="card-name">${item.name}</span>
+                    <span class="card-icon">✦</span>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    renderCards(teamNotes);
+
+    function openModal(item) {
+        currentActiveNote = item;
+        document.getElementById('modalName').innerText = item.name;
+        document.getElementById('modalNote').innerText = item.note;
+        document.getElementById('modalOverlay').classList.add('active');
+        
+        /* Trigger celebratory confetti on opening the note */
+        triggerConfetti();
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function handleOverlayClick(e) {
+        if (e.target.id === 'modalOverlay') closeModal();
+    }
+
+    function filterCards() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = teamNotes.filter(item => item.name.toLowerCase().includes(query));
+        renderCards(filtered);
+    }
+
+    /* Keepsake Note Downloader - High-Res PNG Card Generator */
+    function downloadKeepsake() {
+        if (!currentActiveNote) return;
+
+        const canvas = document.createElement('canvas');
+        const width = 1200;
+        const padding = 80;
+        const ctx = canvas.getContext('2d');
+
+        // Font calculation and text wrapping
+        const lineHeight = 46;
+        ctx.font = '28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
+        function getLines(context, text, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const w = context.measureText(currentLine + " " + word).width;
+                if (w < maxWidth) {
+                    currentLine += " " + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const maxTextWidth = width - (padding * 2) - 40;
+        const lines = getLines(ctx, currentActiveNote.note, maxTextWidth);
+
+        // Dynamic height based on message length
+        const headerHeight = 220;
+        const textBlockHeight = lines.length * lineHeight;
+        const footerHeight = 170;
+        const height = Math.max(680, headerHeight + textBlockHeight + footerHeight);
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Background Gradient
+        const bgGrad = ctx.createLinearGradient(0, 0, width, height);
+        bgGrad.addColorStop(0, '#2b101c');
+        bgGrad.addColorStop(0.5, '#1e0c15');
+        bgGrad.addColorStop(1, '#11050b');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, width, height);
+
+        // Double Framing Borders
+        ctx.strokeStyle = 'rgba(184, 58, 94, 0.45)';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(30, 30, width - 60, height - 60);
+
+        ctx.strokeStyle = 'rgba(141, 154, 145, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(38, 38, width - 76, height - 76);
+
+        // Header Badge
+        ctx.fillStyle = 'rgba(139, 38, 62, 0.4)';
+        ctx.fillRect(padding, padding, 210, 36);
+        ctx.strokeStyle = '#b83a5e';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(padding, padding, 210, 36);
+
+        ctx.fillStyle = '#ff9cb7';
+        ctx.font = 'bold 15px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Perosnal Farewell Note', padding + 105, padding + 24);
+
+        // Sender Info
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#8d9a91';
+        ctx.font = '16px -apple-system, sans-serif';
+        ctx.fillText('Parichay Arora ✦ Signing Off', width - padding, padding + 24);
+
+        // Recipient Name
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#f7f3ec';
+        ctx.font = 'bold 44px -apple-system, sans-serif';
+        ctx.fillText(currentActiveNote.name, padding, padding + 95);
+
+        // Divider
+        ctx.strokeStyle = 'rgba(141, 154, 145, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding + 125);
+        ctx.lineTo(width - padding, padding + 125);
+        ctx.stroke();
+
+        // Note Body
+        ctx.fillStyle = '#ebe4d8';
+        ctx.font = '28px -apple-system, sans-serif';
+        let textY = padding + 185;
+        for (let i = 0; i < lines.length; i++) {
+            ctx.fillText(lines[i], padding, textY);
+            textY += lineHeight;
+        }
+
+        // Footer Divider
+        const footerY = height - 110;
+        ctx.beginPath();
+        ctx.moveTo(padding, footerY);
+        ctx.lineTo(width - padding, footerY);
+        ctx.stroke();
+
+        // Footer Text
+        ctx.fillStyle = '#8d9a91';
+        ctx.font = '16px -apple-system, sans-serif';
+        ctx.fillText('WITH SINCERE APPRECIATION & BEST WISHES', padding, footerY + 45);
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#b83a5e';
+        ctx.font = 'bold 16px -apple-system, sans-serif';
+        ctx.fillText('STAY IN TOUCH', width - padding, footerY + 45);
+
+        // Trigger PNG Download
+        const link = document.createElement('a');
+        link.download = `Farewell_Note_${currentActiveNote.name.replace(/\s+/g, '_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+
+    /* --- Click to Copy Utility --- */
+    function copyContactText(text, successMessage) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('copyToast');
+            toast.innerText = successMessage;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2400);
+        }).catch(() => {});
+    }
+
+    /* --- Form Submission Controller (CORS-Safe) --- */
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('submitBtn');
+        const status = document.getElementById('formStatus');
+        const form = document.getElementById('farewellForm');
+
+        btn.disabled = true;
+        btn.innerText = "Sending...";
+        status.style.display = "none";
+        status.className = "form-status";
+
+        const formData = new FormData(form);
+
+        try {
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+                setTimeout(() => {
+                    status.className = "form-status success";
+                    status.style.display = "flex";
+                    status.innerHTML = "<span>✓</span> <div><strong>Thank you!</strong> Your note has been received.</div>";
+                    form.reset();
+                    btn.disabled = false;
+                    btn.innerHTML = "<span>Send Note</span> ✦";
+                    triggerConfetti();
+                }, 600);
+                return;
+            }
+
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            });
+
+            status.className = "form-status success";
+            status.style.display = "flex";
+            status.innerHTML = "<span>✓</span> <div><strong>Thank you!</strong> Your note has been sent successfully.</div>";
+            form.reset();
+            triggerConfetti();
+
+        } catch (error) {
+            status.className = "form-status error";
+            status.style.display = "block";
+            status.innerText = "Oops! Something went wrong. Please try again or reach out directly.";
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = "<span>Send Note</span> ✦";
+        }
+    }
+
+    /* --- Initialize & Deep-Link Query Support --- */
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(loopTypeWriter, 500);
+
+        const params = new URLSearchParams(window.location.search);
+        const targetId = params.get('id');
+        const targetName = params.get('name');
+
+        if (targetId) {
+            const match = teamNotes.find(item => item.id === targetId);
+            if (match) openModal(match);
+        } else if (targetName) {
+            const match = teamNotes.find(item => item.name.toLowerCase().includes(targetName.toLowerCase()));
+            if (match) openModal(match);
+        }
+    });
+</script>
+
+</body>
+</html>
