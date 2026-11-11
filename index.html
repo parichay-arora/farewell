@@ -1285,6 +1285,7 @@
         }
 
         .welcome-enter-btn.loading {
+            pointer-events: none;
             background: rgba(235, 228, 216, 0.06);
             border: 1px dashed var(--sage-border);
             color: var(--cream-muted);
@@ -1910,13 +1911,19 @@
         updatePreloadProgress();
     }
 
-    // Safety fallback: Never keep the user waiting more than 4 seconds regardless of connection
+    // Safety fallback only for complete network dropouts (25s)
     setTimeout(() => {
-        onPreloadComplete();
-    }, 4200);
+        if (!isAssetsReady) {
+            if (statusText) statusText.innerHTML = `Taking longer than expected... Click below to enter anyway.`;
+            onPreloadComplete();
+        }
+    }, 25000);
 
     /* Welcome Modal Trigger */
     function enterFarewellExperience() {
+        // Strict guard: Do not proceed if assets are still buffering
+        if (!isAssetsReady) return;
+
         const welcome = document.getElementById('welcomeOverlay');
         if (welcome) {
             welcome.classList.add('hidden');
