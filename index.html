@@ -459,6 +459,12 @@
             height: 100%;
             object-fit: contain;
             display: block;
+            transform: scale(1.08);
+            transition: transform 6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease-in-out;
+        }
+
+        .slide.active img {
+            transform: scale(1);
         }
 
         .slide-overlay {
@@ -1793,15 +1799,7 @@
         }
     }
 
-    // Pause on hover so viewers can inspect pictures and captions
-    if (slideshowContainer) {
-        slideshowContainer.addEventListener('mouseenter', stopSlideTimer);
-        slideshowContainer.addEventListener('mouseleave', () => {
-            const welcome = document.getElementById('welcomeOverlay');
-            if (welcome && welcome.classList.contains('hidden')) {
-                startSlideTimer();
-            }
-        });
+});
     }
 
     // Render slides directly with automatic uppercase fallback
